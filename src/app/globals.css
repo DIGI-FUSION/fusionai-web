@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0F152F;
+  --foreground: #ededed;
 }
 
 @theme inline {
@@ -12,15 +12,114 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ffffff;
+    --foreground: #171717;
   }
 }
 
 body {
+  margin: 0;
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
+    Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji",
+    "Segoe UI Emoji";
+}
+
+/* iOS-style liquid glass container (Apple-like tuning) */
+.ios-glass {
+  position: relative;
+  width: 100%;
+  height: auto;
+  border-radius: 30px;
+
+  /* Glass tint */
+  background: rgba(0, 0, 0, 0.18);
+
+  /* Frosted glass refraction */
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  /* Inner shadow (edge refraction) */
+  box-shadow:
+    inset 0 0 16px -2px rgba(145,145,145,0.55),
+    inset 0 1px 0 rgba(255,255,255,0.25),
+    inset 0 -1px 0 rgba(0,0,0,0.25),
+    0 24px 48px rgba(0,0,0,0.35);
+
+  overflow: hidden;
+  isolation: isolate;
+
+  transform: scale(var(--gloss-scale, 1));
+  transition: transform 0.25s ease-out;
+}
+
+/* Specular highlight (scroll-driven) */
+.ios-glass::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  background: radial-gradient(
+    120% 80% at var(--gloss-x, 60%) var(--gloss-y, 30%),
+    rgba(255,255,255,0.35),
+    rgba(255,255,255,0.12) 40%,
+    transparent 70%
+  );
+  opacity: var(--gloss-opacity, 0.2);
+  mix-blend-mode: overlay;
+}
+
+/* Glass noise */
+.ios-glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    repeating-radial-gradient(
+      circle at 50% 50%,
+      rgba(255,255,255,0.03) 0,
+      rgba(255,255,255,0.03) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+  opacity: 0.15;
+  mix-blend-mode: overlay;
+}
+
+/* Optional: subtle grain for realism */
+.ios-glass::marker,
+.btn-glass::after {
+  /* no-op to keep selectors grouped by linter */
+}
+
+.btn-glass {
+  position: relative;
+}
+
+.btn-glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    160px 90px at var(--gloss-x, 70%) 24%,
+    rgba(255, 255, 255, 0.26),
+    rgba(255, 255, 255, 0.08) 42%,
+    transparent 60%
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .ios-glass,
+  .btn-glass {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(30, 30, 36, 0.85);
+  }
 }
