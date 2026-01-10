@@ -4,35 +4,7 @@ import { useState, useRef } from "react";
 import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
 
 import { GetStartedButton } from "@/components/ui/GetStartedButton";
-
-const PRICING_PLANS = [
-  {
-    title: "Free Trial",
-    price: "$0",
-    description: "Unlimited number of workflows",
-    feature: "For individuals testing automation",
-    hasButtons: true,
-    highlighted: true,
-  },
-  {
-    title: "Business",
-    price: "$29/mo",
-    subtitle: "/per 1 month",
-    description: "/per 1 month",
-    feature: "For teams and professionals",
-    hasButtons: false,
-    highlighted: false,
-  },
-  {
-    title: "Enterprise",
-    price: "Contact us",
-    subtitle: "/per 1 month",
-    description: "/per 1 month",
-    feature: "For organizations with custom needs",
-    hasButtons: false,
-    highlighted: false,
-  },
-];
+import { PRICING_PLANS } from "@/constants";
 
 export function Pricing() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);

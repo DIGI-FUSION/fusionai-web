@@ -3,83 +3,17 @@
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
 import { useRef, useState } from "react";
 import { GradientCard } from "@/components/ui/GradientCard";
-
-const USE_CASES = [
-  {
-    category: "INDUSTRY",
-    title: "Mining",
-    description: "Pioneering at the edge of innovation",
-    icon: "⛏️",
-    color: "#4285F4",
-    gradient: "from-blue-500/20 to-cyan-600/20",
-  },
-  {
-    category: "INDUSTRY",
-    title: "Oil & Gas",
-    description: "Automation is the new electricity with Fusion AI",
-    icon: "🛢️",
-    color: "#4285F4",
-    gradient: "from-blue-500/20 to-cyan-600/20",
-  },
-  {
-    category: "LOGISTICS",
-    title: "Supply Chain",
-    description: "Unified, real-time visibility across suppliers",
-    icon: "📦",
-    color: "#4285F4",
-    gradient: "from-blue-500/20 to-cyan-600/20",
-  },
-  {
-    category: "HEALTHCARE",
-    title: "Healthcare",
-    description: "Transforming the future of healthcare delivery",
-    icon: "🏥",
-    color: "#4285F4",
-    gradient: "from-blue-500/20 to-cyan-600/20",
-  },
-  {
-    category: "SECURITY",
-    title: "Defense & Security",
-    description: "Real-time threat intelligence from multiple sources",
-    icon: "🛡️",
-    color: "#4285F4",
-    gradient: "from-blue-500/20 to-cyan-600/20",
-  },
-  {
-    category: "AUTOMOTIVE",
-    title: "Automotive",
-    description: "Data-driven insights for streamlined development",
-    icon: "🚗",
-    color: "#4285F4",
-    gradient: "from-blue-500/20 to-cyan-600/20",
-  },
-  {
-    category: "EDUCATION",
-    title: "Education",
-    description: "Tailored learning pathways for every student",
-    icon: "🎓",
-    color: "#4285F4",
-    gradient: "from-blue-500/20 to-cyan-600/20",
-  },
-  {
-    category: "TRANSPORT",
-    title: "Mobility",
-    description: "Real-time data integration for smart transport",
-    icon: "🚀",
-    color: "#4285F4",
-    gradient: "from-blue-500/20 to-cyan-600/20",
-  },
-];
+import { USE_CASES } from "@/constants";
 
 // Interactive 3D Card with magnetic effect
-function UseCaseCard({ 
-  useCase, 
+function UseCaseCard({
+  useCase,
   index,
   isHovered,
   onHover,
   onLeave,
-}: { 
-  useCase: typeof USE_CASES[0]; 
+}: {
+  useCase: typeof USE_CASES[0];
   index: number;
   isHovered: boolean;
   onHover: () => void;
@@ -88,10 +22,15 @@ function UseCaseCard({
   const cardRef = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  
+
   const rotateX = useSpring(useTransform(y, [-100, 100], [15, -15]), { stiffness: 300, damping: 30 });
   const rotateY = useSpring(useTransform(x, [-100, 100], [-15, 15]), { stiffness: 300, damping: 30 });
-  
+
+  // Fixed particle positions - no randomness
+  const particlePositions = [15, 25, 40, 55, 70, 85, 30, 60];
+  const particleDelays = [0, 0.1, 0.2, 0.3, 0.4, 0.15, 0.25, 0.35];
+  const particleDurations = [1.5, 1.7, 1.9, 2.1, 2.3, 1.6, 1.8, 2.0];
+
   function handleMouse(e: React.MouseEvent) {
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
@@ -154,13 +93,13 @@ function UseCaseCard({
           {/* Floating particles on hover */}
           {isHovered && (
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              {[...Array(8)].map((_, i) => (
+              {particlePositions.map((position, i) => (
                 <motion.div
                   key={i}
                   className="absolute w-1 h-1 rounded-full"
                   style={{
                     background: useCase.color,
-                    left: `${10 + Math.random() * 80}%`,
+                    left: `${position}%`,
                     bottom: "0%",
                   }}
                   animate={{
@@ -169,9 +108,9 @@ function UseCaseCard({
                     scale: [0, 1.5, 0],
                   }}
                   transition={{
-                    duration: 1.5 + Math.random(),
+                    duration: particleDurations[i],
                     repeat: Infinity,
-                    delay: Math.random() * 0.5,
+                    delay: particleDelays[i],
                   }}
                 />
               ))}
@@ -278,7 +217,16 @@ function UseCaseCard({
 export function UseCases() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  
+
+  // Fixed shape dimensions - no randomness
+  const shapes = Array.from({ length: 6 }, (_, i) => ({
+    width: 25 + (i % 3) * 10,
+    height: 25 + ((i + 1) % 3) * 10,
+    left: `${10 + i * 15}%`,
+    top: `${20 + (i % 3) * 30}%`,
+    borderRadius: i % 2 === 0 ? "50%" : "4px",
+  }));
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"],
@@ -324,17 +272,17 @@ export function UseCases() {
         />
 
         {/* Floating geometric shapes */}
-        {[...Array(6)].map((_, i) => (
+        {shapes.map((shape, i) => (
           <motion.div
             key={i}
             className="absolute"
             style={{
-              width: 20 + Math.random() * 30,
-              height: 20 + Math.random() * 30,
-              left: `${10 + i * 15}%`,
-              top: `${20 + (i % 3) * 30}%`,
+              width: shape.width,
+              height: shape.height,
+              left: shape.left,
+              top: shape.top,
               border: "1px solid rgba(255,255,255,0.1)",
-              borderRadius: i % 2 === 0 ? "50%" : "4px",
+              borderRadius: shape.borderRadius,
             }}
             animate={{
               y: [0, -30, 0],

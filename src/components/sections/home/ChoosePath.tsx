@@ -4,40 +4,20 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { GradientCard } from "@/components/ui/GradientCard";
 import { AnimatedSection, StaggerContainer, StaggerItem, TiltCard } from "@/components/animations";
-
-const PATHS = [
-  {
-    title: "Startups",
-    description: "Launch your own AI agents or create a complete digital organization using our tools.",
-    image: "/paths/startups.png",
-    buttonText: "Get Started",
-  },
-  {
-    title: "Entreprises",
-    description: "Custom AI solutions for your sector: Mining, Industry, Retail, and more.",
-    image: "/paths/entreprises.png",
-    buttonText: "Request a demo",
-  },
-  {
-    title: "Government",
-    description: "Technology sovereignty programs and AI training in partnership with public services.",
-    image: "/paths/governement.png",
-    buttonText: "Learn More",
-  },
-];
+import { PATHS } from "@/constants";
 
 export function ChoosePath() {
   return (
-    <section className="relative py-24 px-6 bg-background/95 backdrop-blur-sm overflow-hidden">
+    <section className="relative py-12 sm:py-24 px-4 sm:px-6 bg-background/95 backdrop-blur-sm overflow-hidden">
       <div className="max-w-[1200px] mx-auto">
         {/* Header with animation */}
         <AnimatedSection>
-          <div className="text-center mb-16">
+          <div className="text-center mb-8 sm:mb-16 px-4">
             <h2
+              className="text-2xl sm:text-3xl md:text-[42px] mb-3 sm:mb-4"
               style={{
                 fontFamily: "'Be Vietnam Pro', sans-serif",
                 fontWeight: 500,
-                fontSize: "42px",
                 lineHeight: "120%",
                 letterSpacing: "0.02em",
                 color: "#FFFFFF",
@@ -46,10 +26,9 @@ export function ChoosePath() {
               Choose your path with Fusion AI
             </h2>
             <p
-              className="mt-4"
+              className="text-sm sm:text-base"
               style={{
                 fontFamily: "'Be Vietnam Pro', sans-serif",
-                fontSize: "16px",
                 lineHeight: "26px",
                 color: "rgba(237, 244, 255, 0.7)",
               }}
@@ -63,25 +42,17 @@ export function ChoosePath() {
         <StaggerContainer
           staggerDelay={0.15}
           delayStart={0.2}
-          className="flex flex-col md:flex-row items-stretch justify-center"
-          style={{ gap: "24px" }}
+          className="flex flex-col md:flex-row items-stretch justify-center gap-4 sm:gap-6"
         >
           {PATHS.map((path, index) => (
             <StaggerItem key={path.title}>
               <TiltCard maxTilt={8} glareOpacity={0.15}>
                 <GradientCard
-                  width="384px"
-                  height="423px"
-                  className="flex flex-col items-center"
+                  className="flex flex-col items-center w-full md:w-[384px] h-auto min-h-[380px] sm:min-h-[423px]"
                 >
                   {/* Image Container with hover zoom */}
                   <motion.div
-                    className="relative overflow-hidden"
-                    style={{
-                      width: "336px",
-                      height: "166px",
-                      borderRadius: "8px",
-                    }}
+                    className="relative overflow-hidden w-full max-w-[336px] h-[140px] sm:h-[166px] rounded-lg"
                     whileHover={{ scale: 1.05 }}
                     transition={{ duration: 0.4 }}
                   >
@@ -89,6 +60,7 @@ export function ChoosePath() {
                       src={path.image}
                       alt={path.title}
                       fill
+                      sizes="(max-width: 768px) 100vw, 336px"
                       className="object-cover transition-all duration-500"
                       style={{
                         mixBlendMode: "luminosity",
@@ -104,19 +76,13 @@ export function ChoosePath() {
                   </motion.div>
 
                   {/* Content */}
-                  <div
-                    className="flex flex-col items-center"
-                    style={{
-                      gap: "14px",
-                      width: "336px",
-                    }}
-                  >
+                  <div className="flex flex-col items-center gap-3 sm:gap-[14px] w-full max-w-[336px] px-4">
                     {/* Title */}
                     <h3
+                      className="text-lg sm:text-[22px]"
                       style={{
                         fontFamily: "'Be Vietnam Pro', sans-serif",
                         fontWeight: 600,
-                        fontSize: "22px",
                         lineHeight: "20px",
                         color: "#FFFFFF",
                       }}
@@ -126,12 +92,10 @@ export function ChoosePath() {
 
                     {/* Description */}
                     <p
+                      className="text-sm sm:text-base w-full"
                       style={{
-                        width: "336px",
-                        height: "78px",
                         fontFamily: "'Be Vietnam Pro', sans-serif",
                         fontWeight: 300,
-                        fontSize: "16px",
                         lineHeight: "26px",
                         textAlign: "center",
                         color: "#FFFFFF",
@@ -142,10 +106,10 @@ export function ChoosePath() {
                   </div>
 
                   {/* Button with animation */}
-                  <div style={{ marginTop: "auto" }}>
+                  <div className="mt-auto w-full flex justify-center px-4">
                     <motion.button
-                      className="group relative inline-flex items-center justify-center rounded-full px-6 py-3 text-white font-medium tracking-tight transition-all duration-300 bg-white/5 hover:bg-gradient-to-r hover:from-[#2B61C7] hover:to-[#213C87] shadow-[inset_0_1px_0_0_rgba(255,255,255,.08)]"
-                      whileHover={{ 
+                      className="group relative inline-flex items-center justify-center rounded-full px-5 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base text-white font-medium tracking-tight transition-all duration-300 bg-white/5 hover:bg-gradient-to-r hover:from-[#2B61C7] hover:to-[#213C87] shadow-[inset_0_1px_0_0_rgba(255,255,255,.08)]"
+                      whileHover={{
                         scale: 1.05,
                         boxShadow: "0 14px 30px -14px rgba(66,133,244,.6)"
                       }}

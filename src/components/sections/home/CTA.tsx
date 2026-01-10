@@ -67,12 +67,11 @@ export function CTA() {
     <section
       ref={sectionRef}
       onMouseMove={handleMouseMove}
-      className="bg-background/95 backdrop-blur-sm overflow-hidden"
+      className="bg-background/95 backdrop-blur-sm overflow-hidden py-8 sm:py-16 px-4 sm:px-6"
       style={{
         display: "flex",
         flexDirection: "column",
-        alignItems: "flex-start",
-        padding: "64px 0px",
+        alignItems: "center",
         width: "100%",
         position: "relative",
       }}
@@ -81,17 +80,15 @@ export function CTA() {
         initial={{ opacity: 0, y: 60, scale: 0.95 }}
         animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
         transition={{ duration: 0.8, ease: [0.25, 0.4, 0.25, 1] }}
+        className="w-full max-w-[1200px] rounded-[20px] sm:rounded-[30px] p-12 sm:p-[89px_40px]"
         style={{
           backdropFilter: "blur(3.65px)",
           display: "flex",
           flexDirection: "column",
-          gap: "64px",
+          gap: "40px",
           alignItems: "center",
           justifyContent: "center",
-          padding: "89px 0px",
           position: "relative",
-          borderRadius: "30px",
-          width: "1200px",
           backgroundImage: "linear-gradient(-67.7715deg, rgba(5, 0, 74, 0.1) 6.5965%, rgba(100, 72, 255, 0.1) 100.84%)",
           margin: "0 auto",
           overflow: "hidden",
@@ -149,16 +146,14 @@ export function CTA() {
           }}
         />
 
-        {/* Mouse-responsive glow orb 1 (Pink) */}
+        {/* Mouse-responsive glow orb 1 (Pink) - responsive size */}
         <motion.div
-          className="absolute pointer-events-none"
+          className="absolute pointer-events-none w-32 h-32 sm:w-[180px] sm:h-[180px]"
           style={{
-            right: 100,
-            top: 50,
+            right: "10%",
+            top: "10%",
             x: orbX1,
             y: orbY1,
-            width: 180,
-            height: 180,
             borderRadius: "50%",
             background: "radial-gradient(circle, rgba(240, 135, 255, 0.4) 0%, transparent 70%)",
             filter: "blur(40px)",
@@ -173,17 +168,15 @@ export function CTA() {
             ease: "easeInOut",
           }}
         />
-        
-        {/* Mouse-responsive glow orb 2 (Blue) */}
+
+        {/* Mouse-responsive glow orb 2 (Blue) - responsive size */}
         <motion.div
-          className="absolute pointer-events-none"
+          className="absolute pointer-events-none w-32 h-32 sm:w-[180px] sm:h-[180px]"
           style={{
-            left: 100,
-            top: 70,
+            left: "10%",
+            top: "15%",
             x: orbX2,
             y: orbY2,
-            width: 180,
-            height: 180,
             borderRadius: "50%",
             background: "radial-gradient(circle, rgba(51, 177, 255, 0.4) 0%, transparent 70%)",
             filter: "blur(40px)",
@@ -250,23 +243,23 @@ export function CTA() {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.3 }}
+          className="text-center px-4"
           style={{
             display: "flex",
             flexDirection: "column",
-            gap: "3px",
+            gap: "8px",
             alignItems: "center",
             fontFamily: "'Be Vietnam Pro', sans-serif",
             fontWeight: 500,
-            textWrap: "nowrap",
             width: "100%",
             position: "relative",
             zIndex: 10,
           }}
         >
           <motion.h2
+            className="text-2xl sm:text-3xl md:text-[48px]"
             style={{
-              fontSize: "48px",
-              lineHeight: "42px",
+              lineHeight: "1.2",
               color: "white",
               letterSpacing: "0.68px",
               margin: 0,
@@ -283,9 +276,9 @@ export function CTA() {
             Ready to Automate Your Work?
           </motion.h2>
           <p
+            className="text-base sm:text-lg md:text-[20px]"
             style={{
-              fontSize: "20px",
-              lineHeight: "27.3px",
+              lineHeight: "1.4",
               color: "#c4c4c4",
               margin: 0,
             }}
@@ -299,10 +292,9 @@ export function CTA() {
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.5 }}
+          className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto px-4"
           style={{
-            display: "flex",
-            gap: "15.522px",
-            alignItems: "flex-start",
+            alignItems: "center",
             position: "relative",
             zIndex: 10,
           }}
@@ -311,8 +303,9 @@ export function CTA() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            className="w-full sm:w-auto"
           >
-            <GetStartedButton size="md" />
+            <GetStartedButton size="md" className="w-full sm:w-auto" />
           </motion.div>
 
           {/* Start on GitHub Button */}
@@ -320,6 +313,7 @@ export function CTA() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            className="w-full sm:w-auto"
             style={{
               position: "relative",
               borderRadius: "33.261px",
@@ -327,23 +321,19 @@ export function CTA() {
             }}
           >
             <div
+              className="flex gap-3 items-center justify-center w-full p-3 sm:p-[13.305px]"
               style={{
-                display: "flex",
-                gap: "13.305px",
-                alignItems: "center",
-                justifyContent: "center",
                 overflow: "clip",
-                padding: "13.305px",
                 borderRadius: "inherit",
                 backgroundImage: "linear-gradient(244.75deg, rgba(255, 255, 255, 0.12) 2.51%, rgba(255, 255, 255, 0) 64.942%)",
               }}
             >
               {/* GitHub Icon */}
-              <div style={{ width: "22.174px", height: "22.174px" }}>
+              <div className="w-5 h-5 sm:w-[22px] sm:h-[22px] flex-shrink-0">
                 <svg
                   style={{ display: "block", width: "100%", height: "100%" }}
                   fill="none"
-                  preserveAspectRatio="none"
+                  preserveAspectRatio="xMidYMid meet"
                   viewBox="0 0 22.1742 22.1742"
                 >
                   <g clipPath="url(#clip0_cta)">
@@ -360,11 +350,11 @@ export function CTA() {
                 </svg>
               </div>
               <p
+                className="text-sm sm:text-base whitespace-nowrap"
                 style={{
                   fontFamily: "'Be Vietnam Pro', sans-serif",
                   fontWeight: 500,
                   lineHeight: 1.4,
-                  fontSize: "15.988px",
                   textAlign: "center",
                   color: "white",
                   letterSpacing: "-0.1599px",

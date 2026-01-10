@@ -6,15 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { GetStartedButton } from "@/components/ui/GetStartedButton";
 import { LiquidGlass } from "@/components/animations/LiquidGlass";
-
-type NavItem = { href: string; label: string };
-
-const NAV_ITEMS: NavItem[] = [
-  { href: "/products", label: "Products" },
-  { href: "/why-fusion-ai", label: "Why Fusion AI?" },
-  { href: "/industries", label: "Industries" },
-  { href: "/company", label: "Company" },
-];
+import { NAV_ITEMS } from "@/constants";
 
 export function Navbar() {
   const [open, setOpen] = useState(false);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useRef, useState, useMemo, useId } from "react";
 
 interface LiquidGlassProps {
   children: React.ReactNode;
@@ -18,8 +18,15 @@ export function LiquidGlass({
   maxDisplacement = 20,
 }: LiquidGlassProps) {
   const [dimensions, setDimensions] = useState({ width: 1400, height: 80 });
+  const [isMounted, setIsMounted] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const filterId = useRef(`liquid-glass-${Math.random().toString(36).slice(2, 9)}`);
+  const id = useId();
+  const filterId = `liquid-glass-${id}`;
+
+  // Set mounted flag on client only
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Update dimensions on mount and resize
   useEffect(() => {
@@ -37,8 +44,9 @@ export function LiquidGlass({
     return () => resizeObserver.disconnect();
   }, []);
 
-  // Generate displacement map based on surface function
+  // Generate displacement map based on surface function (client-side only)
   const displacementMapUrl = useMemo(() => {
+    if (!isMounted) return "";
     const { width, height } = dimensions;
     if (width === 0 || height === 0) return "";
 
@@ -174,7 +182,7 @@ export function LiquidGlass({
       >
         <defs>
           <filter
-            id={filterId.current}
+            id={filterId}
             x="0%"
             y="0%"
             width="100%"
@@ -211,8 +219,8 @@ export function LiquidGlass({
       {/* Content with backdrop filter */}
       <div
         style={{
-          backdropFilter: `url(#${filterId.current})`,
-          WebkitBackdropFilter: `url(#${filterId.current})`,
+          backdropFilter: `url(#${filterId})`,
+          WebkitBackdropFilter: `url(#${filterId})`,
         }}
       >
         {children}

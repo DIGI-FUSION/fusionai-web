@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Be_Vietnam_Pro, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Background from "@/components/Background";
-import { Navbar } from "@/components/Navbar";
-import { ScrollProgress } from "@/components/ScrollProgress";
-import { CustomCursor } from "@/components/CustomCursor";
+import Background from "@/components/layout/Background";
+import { Navbar } from "@/components/layout/Navbar";
+import { ScrollProgress } from "@/components/layout/ScrollProgress";
+import { CustomCursor } from "@/components/layout/CustomCursor";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

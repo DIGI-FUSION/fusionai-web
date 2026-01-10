@@ -4,26 +4,7 @@ import Image from "next/image";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { useRef, useState, useEffect, useCallback } from "react";
 import { AnimatedSection } from "@/components/animations";
-
-const INTEGRATIONS = [
-  { name: "DeepSeek", logo: "/apps/deepseck.svg" },
-  { name: "Figma", logo: "/apps/figma.svg" },
-  { name: "GitHub", logo: "/apps/github.svg" },
-  { name: "Google", logo: "/apps/google.svg" },
-  { name: "Mistral", logo: "/apps/msitral.svg" },
-  { name: "Slack", logo: "/apps/slack.svg" },
-  { name: "WhatsApp", logo: "/apps/whatsapp.svg" },
-  { name: "Anthropic", logo: "/apps/anthropic.svg" },
-  { name: "Azure", logo: "/apps/azure.svg" },
-  { name: "Golia", logo: "/apps/golia.svg" },
-  { name: "Groq", logo: "/apps/groq.svg" },
-  { name: "Jira", logo: "/apps/jira.svg" },
-  { name: "MongoDB", logo: "/apps/mongodb.svg" },
-  { name: "PostgreSQL", logo: "/apps/postgresql.svg" },
-  { name: "Redis", logo: "/apps/redis.svg" },
-  { name: "SetlistMX", logo: "/apps/setlistmx.svg" },
-  { name: "Xata", logo: "/apps/xata.svg" },
-];
+import { INTEGRATIONS } from "@/constants";
 
 // Individual app icon with glitch swap animation
 function AppIcon({ 

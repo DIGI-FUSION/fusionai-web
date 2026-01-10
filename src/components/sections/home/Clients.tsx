@@ -3,18 +3,7 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { AnimatedSection } from "@/components/animations";
-
-const CLIENTS = [
-  { name: "Brave", logo: "/clients/brave.svg" },
-  { name: "Microsoft", logo: "/clients/microsoft.svg" },
-  { name: "NVIDIA", logo: "/clients/nvidia.svg" },
-  { name: "Starlink", logo: "/clients/starlink.svg" },
-  { name: "Google", logo: "/clients/google.svg" },
-  { name: "GitHub", logo: "/clients/github.svg" },
-];
-
-// Duplicate for seamless loop
-const DOUBLED_CLIENTS = [...CLIENTS, ...CLIENTS];
+import { DOUBLED_CLIENTS } from "@/constants";
 
 export function Clients() {
   return (
@@ -60,6 +49,7 @@ export function Clients() {
                   width={120}
                   height={60}
                   className="object-contain"
+                  style={{ height: 'auto' }}
                 />
               </motion.div>
             ))}

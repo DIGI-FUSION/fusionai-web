@@ -88,32 +88,32 @@ export function Hero() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-background" />
       </motion.div>
 
-      {/* Animated particles */}
-      <ParticleField count={30} className="z-[1]" />
+      {/* Animated particles - responsive count */}
+      <ParticleField count={20} className="z-[1]" />
       
-      {/* Animated glow orbs */}
-      <GlowOrb 
-        className="top-1/4 left-1/4" 
-        size={400} 
-        color="rgba(69, 135, 244, 0.2)" 
+      {/* Animated glow orbs - responsive sizes */}
+      <GlowOrb
+        className="top-1/4 left-1/4"
+        size={300}
+        color="rgba(69, 135, 244, 0.2)"
         duration={10}
       />
-      <GlowOrb 
-        className="bottom-1/4 right-1/4" 
-        size={350} 
-        color="rgba(147, 51, 234, 0.15)" 
+      <GlowOrb
+        className="bottom-1/4 right-1/4"
+        size={250}
+        color="rgba(147, 51, 234, 0.15)"
         duration={12}
         delay={2}
       />
 
       {/* Content with scale and opacity on scroll */}
-      <motion.div 
-        className="relative z-10 max-w-5xl mx-auto px-6 text-center"
+      <motion.div
+        className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center"
         style={{ opacity, scale }}
       >
         {/* Animated title with word-by-word reveal */}
-        <motion.h1 
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight whitespace-nowrap"
+        <motion.h1
+          className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight sm:whitespace-nowrap"
           variants={titleVariants}
           initial="hidden"
           animate="visible"
@@ -153,8 +153,8 @@ export function Hero() {
         </motion.h1>
 
         {/* Subtitle with fade up */}
-        <motion.p 
-          className="text-xl md:text-2xl text-white/80 mb-12 max-w-3xl mx-auto font-light"
+        <motion.p
+          className="text-base sm:text-xl md:text-2xl text-white/80 mb-8 sm:mb-12 max-w-3xl mx-auto font-light px-2"
           variants={fadeUpVariants}
           initial="hidden"
           animate="visible"
@@ -164,8 +164,8 @@ export function Hero() {
         </motion.p>
 
         {/* Buttons with stagger */}
-        <motion.div 
-          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+        <motion.div
+          className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1.1 }}
@@ -174,18 +174,20 @@ export function Hero() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            className="w-full sm:w-auto"
           >
-            <GetStartedButton size="lg" className="text-base" />
+            <GetStartedButton size="lg" className="text-sm sm:text-base w-full sm:w-auto" />
           </motion.div>
-          
+
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            className="w-full sm:w-auto"
           >
-            <Button variant="glass" size="lg" className="px-8 text-base gap-3">
+            <Button variant="glass" size="lg" className="px-6 sm:px-8 text-sm sm:text-base gap-2 sm:gap-3 w-full sm:w-auto">
               <svg
-                className="size-5"
+                className="size-4 sm:size-5"
                 viewBox="0 0 24 24"
                 fill="currentColor"
                 xmlns="http://www.w3.org/2000/svg"
@@ -197,9 +199,9 @@ export function Hero() {
           </motion.div>
         </motion.div>
 
-        {/* Scroll indicator */}
-        <motion.div 
-          className="absolute -bottom-20 left-1/2 -translate-x-1/2"
+        {/* Scroll indicator - hidden on mobile */}
+        <motion.div
+          className="absolute -bottom-20 left-1/2 -translate-x-1/2 hidden sm:flex"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.5, duration: 0.6 }}
