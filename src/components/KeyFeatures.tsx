@@ -8,66 +8,67 @@ import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePres
 const KEY_FEATURES = [
   {
     title: "FUSION DATA PLATFORM",
-    description: "FUSION DATA PLATFORM constitue la colonne vertébrale de la gouvernance des données de Fusion AI. Elle permet la collecte, la structuration, la sécurisation et la qualification des données provenant de sources multiples, tout en garantissant la traçabilité, la conformité et la cohérence.",
+    description: "FUSION DATA PLATFORM constitue la colonne vertébrale de la gouvernance des données de Fusion AI. Elle permet la collecte, la structuration, la sécurisation et la qualification des données provenant de sources multiples, tout en garantissant la traçabilité, la conformité et la cohérence. En fournissant un contexte de données unifié et fiable, ce module assure que les modèles d'IA, les agents et les automatisations s'appuient sur des données contrôlées, auditables et adaptées à l'environnement d'entreprise.",
     image: "/keySections/data.png",
     icon: "/keySections/data_icon.svg",
-    color: "#4587F4",
+    color: "#4285F4",
   },
   {
     title: "FUSION AUTOMATION",
-    description: "FUSION AUTOMATION est le moteur d'orchestration intelligent des processus métier et techniques. Il permet de concevoir, d'automatiser et de superviser des flux de travail complexes intégrant systèmes d'information, API, événements et agents d'IA.",
+    description: "FUSION AUTOMATION est le moteur d'orchestration intelligent des processus métier et techniques. Il permet de concevoir, d'automatiser et de superviser des flux de travail complexes intégrant systèmes d'information, API, événements et agents d'IA. Grâce à une approche low-code/no-code et à une orchestration pilotée par l'IA, ce module transforme les analyses et les décisions en actions concrètes, mesurables et traçables.",
     image: "/keySections/automation.png",
     icon: "/keySections/automation_icon.svg",
-    color: "#8B5CF6",
+    color: "#4285F4",
   },
   {
     title: "FUSION AGENTIC",
-    description: "FUSION AGENTIC introduit des agents d'IA spécialisés, conçus pour assister, conseiller et agir dans des domaines fonctionnels clairement définis, tout en restant sous contrôle humain et réglementaire.",
+    description: "FUSION AGENTIC introduit des agents d'IA spécialisés, conçus pour assister, conseiller et agir dans des domaines fonctionnels clairement définis, tout en restant sous contrôle humain et réglementaire. Ces agents interagissent en langage naturel, exploitent l'intelligence contextuelle de la plateforme et exécutent des tâches complexes dans des limites réglementées. Le module permet une intelligence opérationnelle continue, collaborative et contrôlée.",
     image: "/keySections/agentic.png",
     icon: "/keySections/agentic_icon.svg",
-    color: "#10B981",
+    color: "#4285F4",
   },
   {
     title: "FUSION FORGE",
-    description: "FUSION FORGE est l'environnement dédié aux chercheurs, aux data scientists et aux ingénieurs en IA pour développer, expérimenter et industrialiser des modèles d'IA.",
+    description: "FUSION FORGE est l'environnement dédié aux chercheurs, aux data scientists et aux ingénieurs en IA pour développer, expérimenter et industrialiser des modèles d'IA. Il centralise les activités d'optimisation, d'évaluation des performances, de gestion des versions et d'exploitation du MLOps au sein d'un cadre structuré et reproductible. Ce module garantit une continuité parfaite entre la recherche, le prototypage et la production, tout en assurant une traçabilité complète des expériences.",
     image: "/keySections/forge.png",
     icon: "/keySections/forge_icon.svg",
-    color: "#F59E0B",
+    color: "#4285F4",
   },
   {
     title: "FUSION MIND",
-    description: "FUSION MIND est la couche de gouvernance cognitive de Fusion AI. Elle permet l'audit des modèles et des agents, la supervision de leur comportement, l'évaluation des risques éthiques.",
+    description: "FUSION MIND est la couche de gouvernance cognitive de Fusion AI. Elle permet l'audit des modèles et des agents, la supervision de leur comportement, l'évaluation des risques éthiques et la mesure de la dette cognitive liée à l'IA. En assurant transparence, explicabilité et contrôle, ce module garantit une utilisation responsable, conforme et durable de l'intelligence artificielle au sein de l'organisation.",
+
     image: "/keySections/mind.png",
     icon: "/keySections/mind_icon.svg",
-    color: "#EC4899",
+    color: "#4285F4",
   },
   {
     title: "FUSION ORBITE",
-    description: "FUSION ORBIT est la boutique native de FUSION AI, conçue pour bâtir un véritable écosystème autour de la plateforme. Elle permet aux utilisateurs, partenaires et intégrateurs de publier et monétiser des composants.",
+    description: "FUSION ORBIT est la boutique native de FUSION AI, conçue pour bâtir un véritable écosystème autour de la plateforme. Elle permet aux utilisateurs, partenaires et intégrateurs de publier, partager et monétiser des composants réutilisables tels que des agents d'IA, des workflows préconfigurés et des modules fonctionnels. En favorisant la réutilisation, l'innovation collaborative et un déploiement accéléré, Fusion Orbit transforme Fusion AI en une plateforme vivante, évolutive et axée sur la valeur.",
     image: "/keySections/orbite.png",
     icon: "/keySections/orbite_icon.svg",
-    color: "#06B6D4",
+    color: "#4285F4",
   },
   {
     title: "FUSION MATE",
-    description: "FUSION MATE est l'interface unifiée entre les utilisateurs et l'IA de Fusion AI. Elle permet de créer et d'opérer des compagnons IA métier contextualisés.",
+    description: "FUSION MATE est l’interface unifiée entre les utilisateurs et l’IA de Fusion AI. Elle permet de créer et d’opérer des compagnons IA métier contextualisés, accessibles en chat, dans les applications ou les outils collaboratifs. En s’appuyant sur les données gouvernées, les agents et les automatisations de la plateforme, Fusion Mate délivre des recommandations, génère du contenu et exécute des actions en temps réel, tout en restant sous contrôle humain et dans un cadre sécurisé.",
     image: "/keySections/mate.png",
     icon: "/keySections/mate_icon.svg",
-    color: "#EF4444",
+    color: "#4285F4",
   },
   {
     title: "FUSION QUICK IT",
-    description: "FUSION QUICK DECISION est l'atelier low-code de Fusion AI pour concevoir rapidement des applications et des services augmentés par l'IA.",
+    description: "FUSION QUICK DECISION est l’atelier low-code de Fusion AI pour concevoir rapidement des applications et des services augmentés par l’IA. Grâce à une interface visuelle, il permet aux équipes IT et métier d’assembler données, agents, automatisations et composants réutilisables issus de Fusion Orbit, sans développements complexes. Ce module accélère le prototypage, l’industrialisation et le déploiement d’applications fiables, sécurisées et parfaitement intégrées à l’écosystème de l’entreprise.",
     image: "/keySections/quickit.png",
     icon: "/keySections/quickit_icon.svg",
-    color: "#84CC16",
+    color: "#4285F4",
   },
   {
     title: "FUSION PROCESSUS",
-    description: "FUSION PROCESSUS permet aux équipes IT et métier d'assembler données, agents, automatisations et composants réutilisables issus de Fusion Orbit.",
+    description: "FUSION QUICK DECISION est l’atelier low-code de Fusion AI pour concevoir rapidement des applications et des services augmentés par l’IA. Grâce à une interface visuelle, il permet aux équipes IT et métier d’assembler données, agents, automatisations et composants réutilisables issus de Fusion Orbit, sans développements complexes. Ce module accélère le prototypage, l’industrialisation et le déploiement d’applications fiables, sécurisées et parfaitement intégrées à l’écosystème de l’entreprise.",
     image: "/keySections/processus.png",
     icon: "/keySections/processus_icon_svg.svg",
-    color: "#A855F7",
+    color: "#4285F4",
   },
 ];
 
@@ -132,8 +133,8 @@ function FeatureCard({
           rotateX: isActive ? rotateX : 0,
           rotateY: isActive ? rotateY : 0,
           transformStyle: "preserve-3d",
-          width: "100px",
-          height: "100px",
+          width: "clamp(72px, 8vw, 100px)",
+          height: "clamp(72px, 8vw, 100px)",
           background: `linear-gradient(135deg, ${feature.color}20, transparent)`,
           border: isActive ? `2px solid ${feature.color}` : "2px solid rgba(255,255,255,0.1)",
           boxShadow: isActive ? `0 0 30px ${feature.color}40` : "none",
@@ -157,7 +158,8 @@ function FeatureCard({
         {/* Icon - centered */}
         <div className="absolute inset-0 flex items-center justify-center">
           <motion.div
-            className="w-10 h-10 relative"
+            className="relative"
+            style={{ width: "clamp(24px, 3vw, 40px)", height: "clamp(24px, 3vw, 40px)" }}
             animate={isActive ? {
               y: [0, -3, 0],
               rotate: [0, 5, 0, -5, 0],
@@ -193,7 +195,7 @@ function FeatureCard({
         className="text-center mt-2 text-[10px] font-medium"
         style={{ 
           color: isActive ? feature.color : "rgba(255,255,255,0.5)",
-          maxWidth: "100px",
+          maxWidth: "clamp(72px, 8vw, 100px)",
         }}
         animate={{ opacity: isActive ? 1 : 0.5 }}
       >
@@ -217,26 +219,26 @@ function ExpandedContent({ feature, index }: { feature: (typeof KEY_FEATURES)[0]
       <GradientCard
         variant="gradient-bg"
         width="100%"
-        height="500px"
-        padding="48px"
+        height="clamp(360px, 50vh, 500px)"
+        padding="clamp(20px, 5vw, 48px)"
         className="flex flex-row items-center relative overflow-hidden"
       >
-        {/* Animated icon - absolute top left of card */}
-        <motion.div
+        {/* Animated ring with static icon - absolute top left of card */}
+        <div
           className="absolute top-6 left-6 z-20"
-          style={{ width: "60px", height: "60px" }}
-          animate={{ 
-            rotate: [0, 360],
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          style={{ width: "clamp(40px, 6vw, 60px)", height: "clamp(40px, 6vw, 60px)" }}
         >
+          {/* Rotate only the conic gradient ring */}
           <motion.div
             className="absolute inset-0 rounded-full"
             style={{
               background: `conic-gradient(from 0deg, ${feature.color}, transparent, ${feature.color})`,
               filter: "blur(3px)",
             }}
+            animate={{ rotate: 360 }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
           />
+          {/* Keep the icon static */}
           <div
             className="absolute inset-1 rounded-full flex items-center justify-center"
             style={{ background: "rgba(0,0,0,0.8)" }}
@@ -244,12 +246,12 @@ function ExpandedContent({ feature, index }: { feature: (typeof KEY_FEATURES)[0]
             <Image
               src={feature.icon}
               alt={feature.title}
-              width={30}
-              height={30}
+              width={24}
+              height={24}
               className="object-contain"
             />
           </div>
-        </motion.div>
+        </div>
 
         {/* Animated background particles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -280,11 +282,12 @@ function ExpandedContent({ feature, index }: { feature: (typeof KEY_FEATURES)[0]
         <div className="flex flex-col items-start justify-center flex-1 pr-8 relative z-10 pt-16">
           {/* Title with typewriter effect */}
           <motion.h3
-            className="text-4xl font-bold mb-4"
+            className="font-bold mb-4"
             style={{
               background: `linear-gradient(135deg, ${feature.color}, #fff)`,
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
+              fontSize: "clamp(20px, 3.2vw, 36px)",
             }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -296,6 +299,7 @@ function ExpandedContent({ feature, index }: { feature: (typeof KEY_FEATURES)[0]
           {/* Description with staggered words */}
           <motion.p
             className="text-base text-white/80 leading-relaxed max-w-xl"
+            style={{ textAlign: "justify" }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
@@ -323,7 +327,7 @@ function ExpandedContent({ feature, index }: { feature: (typeof KEY_FEATURES)[0]
         {/* Right side - Image with floating animation */}
         <motion.div
           className="relative"
-          style={{ width: "400px", height: "400px" }}
+          style={{ width: "clamp(240px, 35vw, 400px)", height: "clamp(240px, 35vw, 400px)" }}
           animate={{ 
             y: [0, -15, 0],
           }}

@@ -1,323 +1,439 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
+import { useRef, useState } from "react";
 import { GradientCard } from "@/components/ui/GradientCard";
-import { AnimatedSection, StaggerContainer, StaggerItem } from "@/components/animations";
 
 const USE_CASES = [
   {
-    category: "TOOL / LIBRARY",
+    category: "INDUSTRY",
     title: "Mining",
     description: "Pioneering at the edge of innovation",
+    icon: "⛏️",
+    color: "#4285F4",
+    gradient: "from-blue-500/20 to-cyan-600/20",
   },
   {
-    category: "TOOL / LIBRARY",
+    category: "INDUSTRY",
     title: "Oil & Gas",
     description: "Automation is the new electricity with Fusion AI",
+    icon: "🛢️",
+    color: "#4285F4",
+    gradient: "from-blue-500/20 to-cyan-600/20",
   },
   {
-    category: "TOOL / LIBRARY",
+    category: "LOGISTICS",
     title: "Supply Chain",
-    description: "Fusion AI delivers unified, real-time visibility across suppliers",
+    description: "Unified, real-time visibility across suppliers",
+    icon: "📦",
+    color: "#4285F4",
+    gradient: "from-blue-500/20 to-cyan-600/20",
   },
   {
-    category: "TOOL / LIBRARY",
+    category: "HEALTHCARE",
     title: "Healthcare",
-    description: "Fusion AI - Transforming the future of healthcare delivery",
+    description: "Transforming the future of healthcare delivery",
+    icon: "🏥",
+    color: "#4285F4",
+    gradient: "from-blue-500/20 to-cyan-600/20",
   },
   {
-    category: "TOOL / LIBRARY",
+    category: "SECURITY",
     title: "Defense & Security",
-    description: "Fusion AI delivers real-time threat intelligence by analyzing multiple sources",
+    description: "Real-time threat intelligence from multiple sources",
+    icon: "🛡️",
+    color: "#4285F4",
+    gradient: "from-blue-500/20 to-cyan-600/20",
   },
   {
-    category: "TOOL / LIBRARY",
+    category: "AUTOMOTIVE",
     title: "Automotive",
-    description: "Fusion AI streamlines development by providing data-driven insights",
+    description: "Data-driven insights for streamlined development",
+    icon: "🚗",
+    color: "#4285F4",
+    gradient: "from-blue-500/20 to-cyan-600/20",
   },
   {
-    category: "TOOL / LIBRARY",
+    category: "EDUCATION",
     title: "Education",
-    description: "Fusion AI tailors learning pathways by dynamic adjustment to each student",
+    description: "Tailored learning pathways for every student",
+    icon: "🎓",
+    color: "#4285F4",
+    gradient: "from-blue-500/20 to-cyan-600/20",
   },
   {
-    category: "TOOL / LIBRARY",
+    category: "TRANSPORT",
     title: "Mobility",
-    description: "Fusion AI for mobility integrates real-time data from transports, traffic, etc.",
+    description: "Real-time data integration for smart transport",
+    icon: "🚀",
+    color: "#4285F4",
+    gradient: "from-blue-500/20 to-cyan-600/20",
   },
 ];
 
-// Helper component for use case card content
-function UseCaseCardContent({ useCase }: { useCase: (typeof USE_CASES)[0] }) {
+// Interactive 3D Card with magnetic effect
+function UseCaseCard({ 
+  useCase, 
+  index,
+  isHovered,
+  onHover,
+  onLeave,
+}: { 
+  useCase: typeof USE_CASES[0]; 
+  index: number;
+  isHovered: boolean;
+  onHover: () => void;
+  onLeave: () => void;
+}) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  
+  const rotateX = useSpring(useTransform(y, [-100, 100], [15, -15]), { stiffness: 300, damping: 30 });
+  const rotateY = useSpring(useTransform(x, [-100, 100], [-15, 15]), { stiffness: 300, damping: 30 });
+  
+  function handleMouse(e: React.MouseEvent) {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    x.set(e.clientX - rect.left - rect.width / 2);
+    y.set(e.clientY - rect.top - rect.height / 2);
+  }
+
+  function handleMouseLeave() {
+    x.set(0);
+    y.set(0);
+    onLeave();
+  }
+
   return (
-    <div
+    <motion.div
+      ref={cardRef}
+      className="relative cursor-pointer"
       style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-start",
-        padding: "0px",
-        gap: "10px",
-        width: "282.57px",
-        height: "117px",
-        flex: "none",
-        order: 0,
-        flexGrow: 0,
+        perspective: 1000,
+        transformStyle: "preserve-3d",
       }}
+      initial={{ opacity: 0, y: 60, rotateX: -20 }}
+      whileInView={{ 
+        opacity: 1, 
+        y: 0, 
+        rotateX: 0,
+      }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ 
+        duration: 0.6,
+        delay: index * 0.1,
+        ease: [0.25, 0.4, 0.25, 1] as const,
+      }}
+      onMouseMove={handleMouse}
+      onMouseEnter={onHover}
+      onMouseLeave={handleMouseLeave}
     >
-      {/* Category */}
-      <span
+      <motion.div
         style={{
-          width: "117px",
-          height: "20px",
-          fontFamily: "'Be Vietnam Pro'",
-          fontStyle: "normal",
-          fontWeight: 400,
-          fontSize: "12px",
-          lineHeight: "19px",
-          letterSpacing: "1.5px",
-          textTransform: "uppercase",
-          color: "#C89AFF",
-          flex: "none",
-          order: 0,
-          flexGrow: 0,
+          rotateX,
+          rotateY,
+          transformStyle: "preserve-3d",
         }}
       >
-        {useCase.category}
-      </span>
-
-      {/* Content */}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-start",
-          padding: "0px",
-          gap: "14px",
-          width: "260.24px",
-          height: "87px",
-          flex: "none",
-          order: 1,
-          flexGrow: 0,
-        }}
-      >
-        {/* Title */}
-        <h3
-          style={{
-            height: "21px",
-            fontFamily: "'Be Vietnam Pro'",
-            fontStyle: "normal",
-            fontWeight: 600,
-            fontSize: "19px",
-            lineHeight: "20px",
-            color: "#FFFFFF",
-            flex: "none",
-            order: 0,
-            flexGrow: 0,
-            margin: 0,
-          }}
+        <GradientCard
+          width="100%"
+          height="220px"
+          padding="28px"
+          className={`relative overflow-hidden transition-all duration-300 ${
+            isHovered ? "z-10" : "z-0"
+          }`}
         >
-          {useCase.title}
-        </h3>
+          {/* Animated gradient background on hover */}
+          <motion.div
+            className={`absolute inset-0 bg-gradient-to-br ${useCase.gradient} opacity-0`}
+            animate={{ opacity: isHovered ? 1 : 0 }}
+            transition={{ duration: 0.3 }}
+          />
+          
+          {/* Floating particles on hover */}
+          {isHovered && (
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              {[...Array(8)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute w-1 h-1 rounded-full"
+                  style={{
+                    background: useCase.color,
+                    left: `${10 + Math.random() * 80}%`,
+                    bottom: "0%",
+                  }}
+                  animate={{
+                    y: [0, -150],
+                    opacity: [0, 1, 0],
+                    scale: [0, 1.5, 0],
+                  }}
+                  transition={{
+                    duration: 1.5 + Math.random(),
+                    repeat: Infinity,
+                    delay: Math.random() * 0.5,
+                  }}
+                />
+              ))}
+            </div>
+          )}
 
-        {/* Description */}
-        <p
-          style={{
-            width: "260.24px",
-            height: "52px",
-            fontFamily: "'Be Vietnam Pro'",
-            fontStyle: "normal",
-            fontWeight: 400,
-            fontSize: "16px",
-            lineHeight: "26px",
-            color: "#FFFFFF",
-            flex: "none",
-            order: 1,
-            flexGrow: 0,
-            margin: 0,
-          }}
-        >
-          {useCase.description}
-        </p>
-      </div>
-    </div>
+          {/* Glowing border on hover */}
+          <motion.div
+            className="absolute inset-0 rounded-2xl pointer-events-none"
+            animate={{
+              boxShadow: isHovered 
+                ? `0 0 40px ${useCase.color}40, inset 0 0 30px ${useCase.color}10` 
+                : "none",
+              border: isHovered ? `1px solid ${useCase.color}50` : "1px solid transparent",
+            }}
+            transition={{ duration: 0.3 }}
+          />
+
+          {/* Content */}
+          <div className="relative z-10 h-full flex flex-col">
+            {/* Header with icon and category */}
+            <div className="flex items-center gap-3 mb-4">
+              {/* Animated icon */}
+              <motion.div
+                className="text-3xl"
+                animate={isHovered ? {
+                  scale: [1, 1.2, 1],
+                  rotate: [0, 10, -10, 0],
+                } : {}}
+                transition={{ duration: 0.5 }}
+              >
+                {useCase.icon}
+              </motion.div>
+              
+              {/* Category badge */}
+              <motion.span
+                className="px-3 py-1 rounded-full text-[10px] font-semibold tracking-wider"
+                style={{
+                  background: `${useCase.color}20`,
+                  color: useCase.color,
+                  border: `1px solid ${useCase.color}30`,
+                }}
+                animate={isHovered ? { scale: 1.05 } : { scale: 1 }}
+              >
+                {useCase.category}
+              </motion.span>
+            </div>
+
+            {/* Title with underline animation */}
+            <div className="relative mb-3">
+              <motion.h3
+                className="text-xl font-bold text-white"
+                animate={isHovered ? { x: 5 } : { x: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                {useCase.title}
+              </motion.h3>
+              <motion.div
+                className="absolute -bottom-1 left-0 h-0.5 rounded-full"
+                style={{ background: useCase.color }}
+                initial={{ width: 0 }}
+                animate={{ width: isHovered ? "60%" : 0 }}
+                transition={{ duration: 0.3 }}
+              />
+            </div>
+
+            {/* Description */}
+            <motion.p
+              className="text-white/70 text-sm leading-relaxed flex-1"
+              animate={isHovered ? { opacity: 1, x: 5 } : { opacity: 0.7, x: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              {useCase.description}
+            </motion.p>
+
+            {/* Arrow indicator */}
+            <motion.div
+              className="absolute bottom-6 right-6 flex items-center gap-2"
+              initial={{ opacity: 0, x: -10 }}
+              animate={isHovered ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
+              transition={{ duration: 0.2 }}
+            >
+              <span className="text-xs" style={{ color: useCase.color }}>Explore</span>
+              <motion.svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke={useCase.color}
+                strokeWidth="2"
+                animate={isHovered ? { x: [0, 5, 0] } : {}}
+                transition={{ duration: 0.8, repeat: Infinity }}
+              >
+                <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+              </motion.svg>
+            </motion.div>
+          </div>
+        </GradientCard>
+      </motion.div>
+    </motion.div>
   );
 }
 
 export function UseCases() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"],
+  });
+
+  const backgroundY = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const headerOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 1]);
+
   return (
-    <section className="relative py-20 px-6 bg-background/95 backdrop-blur-sm overflow-hidden">
-      <div 
-        className="mx-auto flex flex-col items-center"
-        style={{
-          padding: "62px 0px",
-          gap: "24px",
-          maxWidth: "1200px",
-        }}
-      >
-      {/* Header with animation */}
-      <AnimatedSection>
-        <div className="text-center mb-16">
-          <h2
+    <section 
+      ref={containerRef}
+      className="relative py-24 px-6 bg-background/95 backdrop-blur-sm overflow-hidden"
+    >
+      {/* Animated background elements */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Moving gradient orbs */}
+        <motion.div
+          className="absolute w-[600px] h-[600px] rounded-full"
+          style={{
+            background: "radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%)",
+            left: "-10%",
+            top: "20%",
+            y: backgroundY,
+          }}
+          animate={{
+            scale: [1, 1.2, 1],
+            x: [0, 50, 0],
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute w-[500px] h-[500px] rounded-full"
+          style={{
+            background: "radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%)",
+            right: "-5%",
+            bottom: "10%",
+          }}
+          animate={{
+            scale: [1, 1.3, 1],
+            x: [0, -30, 0],
+          }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+        />
+
+        {/* Floating geometric shapes */}
+        {[...Array(6)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute"
             style={{
-              fontFamily: "'Be Vietnam Pro', sans-serif",
-              fontWeight: 500,
-              fontSize: "42px",
-              lineHeight: "120%",
-              letterSpacing: "0.02em",
-              color: "#FFFFFF",
-              margin: 0,
-              marginBottom: "8px",
+              width: 20 + Math.random() * 30,
+              height: 20 + Math.random() * 30,
+              left: `${10 + i * 15}%`,
+              top: `${20 + (i % 3) * 30}%`,
+              border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: i % 2 === 0 ? "50%" : "4px",
             }}
+            animate={{
+              y: [0, -30, 0],
+              rotate: [0, 180, 360],
+              opacity: [0.1, 0.3, 0.1],
+            }}
+            transition={{
+              duration: 8 + i * 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: i * 0.5,
+            }}
+          />
+        ))}
+      </div>
+
+      <div className="max-w-6xl mx-auto relative z-10">
+        {/* Header with parallax */}
+        <motion.div 
+          className="text-center mb-16"
+          style={{ opacity: headerOpacity }}
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            
+          </motion.div>
+          
+          <motion.h2
+            className="text-5xl font-bold text-white mb-4"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 }}
           >
             Use Cases
-          </h2>
-          <p
-            style={{
-              fontFamily: "'Be Vietnam Pro', sans-serif",
-              fontSize: "16px",
-              lineHeight: "26px",
-              color: "rgba(237, 244, 255, 0.7)",
-              margin: 0,
-            }}
+          </motion.h2>
+          
+          <motion.p
+            className="text-white/60 text-lg max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
           >
             Real flows for real teams — from support to marketing.
-          </p>
-        </div>
-      </AnimatedSection>
+            <br />
+            <span className="text-white/40">Discover how Fusion AI transforms industries.</span>
+          </motion.p>
+        </motion.div>
 
-      {/* Cards Container with staggered rows */}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-start",
-          padding: "0px",
-          gap: "24px",
-          width: "1200px",
-          height: "591px",
-          flex: "none",
-          order: 1,
-          alignSelf: "stretch",
-          flexGrow: 0,
-        }}
-      >
-        {/* Row 1 - Three Cards */}
-        <StaggerContainer
-          staggerDelay={0.1}
-          delayStart={0.2}
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            padding: "0px",
-            gap: "24px",
-            width: "1200px",
-            height: "181px",
-            flex: "none",
-            order: 0,
-            alignSelf: "stretch",
-            flexGrow: 0,
-          }}
-        >
+        {/* Cards Grid - Bento style layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Row 1: 3 cards */}
           {USE_CASES.slice(0, 3).map((useCase, index) => (
-            <StaggerItem key={index}>
-              <motion.div
-                whileHover={{ y: -8, scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              >
-                <GradientCard
-                  width="384px"
-                  height="181px"
-                  padding="32px"
-                  gap="10px"
-                  className="flex-col items-start"
-                  style={{ flexGrow: 1 }}
-                >
-                  <UseCaseCardContent useCase={useCase} />
-                </GradientCard>
-              </motion.div>
-            </StaggerItem>
+            <UseCaseCard
+              key={useCase.title}
+              useCase={useCase}
+              index={index}
+              isHovered={hoveredIndex === index}
+              onHover={() => setHoveredIndex(index)}
+              onLeave={() => setHoveredIndex(null)}
+            />
           ))}
-        </StaggerContainer>
-
-        {/* Row 2 - Two Cards */}
-        <StaggerContainer
-          staggerDelay={0.1}
-          delayStart={0.4}
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            padding: "0px",
-            gap: "24px",
-            width: "1200px",
-            height: "181px",
-            flex: "none",
-            order: 1,
-            alignSelf: "stretch",
-            flexGrow: 0,
-          }}
-        >
-          {USE_CASES.slice(3, 5).map((useCase, index) => (
-            <StaggerItem key={index}>
-              <motion.div
-                whileHover={{ y: -8, scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              >
-                <GradientCard
-                  width="588px"
-                  height="181px"
-                  padding="32px"
-                  gap="10px"
-                  className="flex-col items-start"
-                  style={{ flexGrow: 1 }}
-                >
-                  <UseCaseCardContent useCase={useCase} />
-                </GradientCard>
-              </motion.div>
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
-
-        {/* Row 3 - Three Cards */}
-        <StaggerContainer
-          staggerDelay={0.1}
-          delayStart={0.6}
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            padding: "0px",
-            gap: "24px",
-            width: "1200px",
-            height: "181px",
-            flex: "none",
-            order: 2,
-            alignSelf: "stretch",
-            flexGrow: 0,
-          }}
-        >
+          
+          {/* Row 2: 2 wider cards */}
+          <div className="lg:col-span-2">
+            <UseCaseCard
+              useCase={USE_CASES[3]}
+              index={3}
+              isHovered={hoveredIndex === 3}
+              onHover={() => setHoveredIndex(3)}
+              onLeave={() => setHoveredIndex(null)}
+            />
+          </div>
+          <UseCaseCard
+            useCase={USE_CASES[4]}
+            index={4}
+            isHovered={hoveredIndex === 4}
+            onHover={() => setHoveredIndex(4)}
+            onLeave={() => setHoveredIndex(null)}
+          />
+          
+          {/* Row 3: 3 cards */}
           {USE_CASES.slice(5, 8).map((useCase, index) => (
-            <StaggerItem key={index}>
-              <motion.div
-                whileHover={{ y: -8, scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              >
-                <GradientCard
-                  width="384px"
-                  height="181px"
-                  padding="32px"
-                  gap="10px"
-                  className="flex-col items-start"
-                  style={{ flexGrow: 1 }}
-                >
-                  <UseCaseCardContent useCase={useCase} />
-                </GradientCard>
-              </motion.div>
-            </StaggerItem>
+            <UseCaseCard
+              key={useCase.title}
+              useCase={useCase}
+              index={index + 5}
+              isHovered={hoveredIndex === index + 5}
+              onHover={() => setHoveredIndex(index + 5)}
+              onLeave={() => setHoveredIndex(null)}
+            />
           ))}
-        </StaggerContainer>
-      </div>
+        </div>
+
       </div>
     </section>
   );

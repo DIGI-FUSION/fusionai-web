@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
 
 import { GetStartedButton } from "@/components/ui/GetStartedButton";
 
@@ -35,8 +36,64 @@ const PRICING_PLANS = [
 
 export function Pricing() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"],
+  });
+
+  const backgroundY = useTransform(scrollYProgress, [0, 1], [50, -50]);
+  
   return (
-    <section className="relative py-20 px-6 bg-background/95 backdrop-blur-sm">
+    <section ref={containerRef} className="relative py-20 px-6 bg-background/95 backdrop-blur-sm overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Floating orbs */}
+        <motion.div
+          className="absolute w-[400px] h-[400px] rounded-full"
+          style={{
+            background: "radial-gradient(circle, rgba(55, 93, 251, 0.15) 0%, transparent 70%)",
+            left: "10%",
+            top: "20%",
+            y: backgroundY,
+          }}
+          animate={{
+            scale: [1, 1.2, 1],
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute w-[300px] h-[300px] rounded-full"
+          style={{
+            background: "radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%)",
+            right: "15%",
+            bottom: "30%",
+          }}
+          animate={{
+            scale: [1, 1.3, 1],
+          }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+        />
+        
+        {/* Animated grid lines */}
+        <motion.div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `
+              linear-gradient(rgba(55, 93, 251, 0.03) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(55, 93, 251, 0.03) 1px, transparent 1px)
+            `,
+            backgroundSize: "60px 60px",
+          }}
+          animate={{
+            backgroundPosition: ["0px 0px", "60px 60px"],
+          }}
+          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+        />
+      </div>
+
+
       <div
         style={{
           maxWidth: "1200px",
@@ -44,12 +101,9 @@ export function Pricing() {
           display: "flex",
           flexDirection: "row",
           alignItems: "center",
-          padding: "62px 24px",
+          padding: "0 24px",
           gap: "24px",
-          flex: "none",
-          order: 11,
-          flexGrow: 0,
-          zIndex: 11,
+          justifyContent: "center",
         }}
       >
         {PRICING_PLANS.map((plan, index) => {
@@ -59,22 +113,59 @@ export function Pricing() {
         const shouldShowBorder = plan.highlighted || isHovered;
         
         return (
-        <div
+        <motion.div
           key={index}
+          initial={{ opacity: 0, y: 50, rotateX: -10 }}
+          whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ 
+            duration: 0.6, 
+            delay: index * 0.15,
+            ease: [0.25, 0.4, 0.25, 1] as const,
+          }}
+          whileHover={{ 
+            y: -10,
+            transition: { duration: 0.3 }
+          }}
           onMouseEnter={() => setHoveredIndex(index)}
           onMouseLeave={() => setHoveredIndex(null)}
           style={{
-            padding: shouldShowBorder ? "1px" : "0px",
-            borderRadius: "30px",
-            background: shouldShowBorder 
-              ? "linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 100%)" 
-              : "transparent",
-            flex: "none",
-            order: index,
-            flexGrow: 0,
-            transition: "all 0.3s ease",
+            perspective: 1000,
           }}
         >
+          <motion.div
+            style={{
+              padding: shouldShowBorder ? "1px" : "0px",
+              borderRadius: "30px",
+              background: shouldShowBorder 
+                ? "linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 100%)" 
+                : "transparent",
+              position: "relative",
+            }}
+            animate={{
+              boxShadow: isHovered 
+                ? "0 25px 50px -12px rgba(55, 93, 251, 0.25)" 
+                : "0 0 0 rgba(0,0,0,0)",
+            }}
+            transition={{ duration: 0.3 }}
+          >
+            {/* Animated glow effect */}
+            <AnimatePresence>
+              {isHovered && (
+                <motion.div
+                  className="absolute inset-0 rounded-[30px] pointer-events-none"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  style={{
+                    background: "radial-gradient(circle at 50% 0%, rgba(55, 93, 251, 0.3), transparent 60%)",
+                  }}
+                />
+              )}
+            </AnimatePresence>
+            
+ 
+
           <div
             style={{
               boxSizing: "border-box",
@@ -92,10 +183,23 @@ export function Pricing() {
               backdropFilter: "blur(12.5px)",
               borderRadius: shouldShowBorder ? "29px" : "30px",
               transition: "all 0.3s ease",
+              position: "relative",
+              overflow: "hidden",
             }}
           >
+            {/* Animated shimmer effect on hover */}
+            <motion.div
+              className="absolute inset-0 pointer-events-none"
+              initial={{ x: "-100%", opacity: 0 }}
+              animate={isHovered ? { x: "100%", opacity: 0.1 } : { x: "-100%", opacity: 0 }}
+              transition={{ duration: 0.8 }}
+              style={{
+                background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)",
+                transform: "skewX(-20deg)",
+              }}
+            />
           {/* Title Section */}
-          <div
+          <motion.div
             style={{
               boxSizing: "border-box",
               display: "flex",
@@ -113,8 +217,9 @@ export function Pricing() {
               flexGrow: 0,
               transition: "border-color 0.3s ease",
             }}
+            animate={isHovered ? { borderColor: "#FFFFFF" } : {}}
           >
-            <h3
+            <motion.h3
               style={{
                 width: "320px",
                 height: "21px",
@@ -129,10 +234,12 @@ export function Pricing() {
                 flexGrow: 1,
                 margin: 0,
               }}
+              animate={isHovered ? { x: 5 } : { x: 0 }}
+              transition={{ duration: 0.2 }}
             >
               {plan.title}
-            </h3>
-          </div>
+            </motion.h3>
+          </motion.div>
 
           {/* Price Section */}
           <div
@@ -149,7 +256,7 @@ export function Pricing() {
               flexGrow: 0,
             }}
           >
-            <div
+            <motion.div
               style={{
                 width: index === 0 ? "317px" : "318px",
                 height: "45px",
@@ -165,9 +272,15 @@ export function Pricing() {
                 order: 0,
                 flexGrow: 0,
               }}
+              animate={isHovered ? { 
+                scale: 1.05,
+              } : {
+                scale: 1,
+              }}
+              transition={{ duration: 0.3 }}
             >
               {plan.price}
-            </div>
+            </motion.div>
             <div
               style={{
                 width: index === 0 ? "242px" : "98px",
@@ -188,7 +301,7 @@ export function Pricing() {
           </div>
 
           {/* Feature Section with Icon */}
-          <div
+          <motion.div
             style={{
               display: "flex",
               flexDirection: "row",
@@ -201,9 +314,12 @@ export function Pricing() {
               order: 2,
               flexGrow: 0,
             }}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 + index * 0.1, duration: 0.5 }}
           >
             {/* Fire Icon */}
-            <svg
+            <motion.svg
               width="18"
               height="18"
               viewBox="0 0 18 18"
@@ -214,6 +330,11 @@ export function Pricing() {
                 order: 0,
                 flexGrow: 0,
               }}
+              animate={isHovered ? {
+                scale: [1, 1.2, 1],
+                rotate: [0, -5, 5, 0],
+              } : {}}
+              transition={{ duration: 0.5 }}
             >
               <g>
                 <ellipse cx="9" cy="17.1" rx="1.44" ry="0.45" fill="url(#fire-gradient1)" />
@@ -305,10 +426,10 @@ export function Pricing() {
                   <stop offset="97.55%" stopColor="#F93A1D" />
                 </radialGradient>
               </defs>
-            </svg>
+            </motion.svg>
 
             {/* Feature Text */}
-            <span
+            <motion.span
               style={{
                 width: index === 0 ? "266px" : index === 1 ? "220px" : "286px",
                 height: "26px",
@@ -322,14 +443,16 @@ export function Pricing() {
                 order: 1,
                 flexGrow: 0,
               }}
+              animate={isHovered ? { color: "#FFFFFF" } : { color: "#7996AA" }}
+              transition={{ duration: 0.3 }}
             >
               {plan.feature}
-            </span>
-          </div>
+            </motion.span>
+          </motion.div>
 
           {/* Buttons Section */}
           {shouldShowButtons && (
-            <div
+            <motion.div
               style={{
                 display: "flex",
                 flexDirection: "row",
@@ -343,11 +466,14 @@ export function Pricing() {
                 alignSelf: "stretch",
                 flexGrow: 0,
               }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 + index * 0.1, duration: 0.5 }}
             >
               <GetStartedButton size="md" className="flex-1" />
 
               {/* Start on GitHub Button */}
-              <button
+              <motion.button
                 style={{
                   boxSizing: "border-box",
                   display: "flex",
@@ -369,14 +495,21 @@ export function Pricing() {
                   order: 1,
                   flexGrow: 0,
                 }}
+                whileHover={{ 
+                  scale: 1.05,
+                  boxShadow: "0px 0px 15px 2px rgba(55, 93, 251, 0.6)",
+                }}
+                whileTap={{ scale: 0.95 }}
               >
                 {/* GitHub Icon */}
-                <svg
+                <motion.svg
                   width="20"
                   height="20"
                   viewBox="0 0 20 20"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
+                  whileHover={{ rotate: 360 }}
+                  transition={{ duration: 0.5 }}
                 >
                   <path
                     fillRule="evenodd"
@@ -384,7 +517,7 @@ export function Pricing() {
                     d="M10 0.208008C4.477 0.208008 0 4.68501 0 10.208C0 14.653 2.865 18.428 6.839 19.748C7.339 19.838 7.521 19.528 7.521 19.258C7.521 19.018 7.512 18.378 7.508 17.538C4.726 18.138 4.139 16.208 4.139 16.208C3.685 15.048 3.029 14.738 3.029 14.738C2.121 14.118 3.098 14.128 3.098 14.128C4.101 14.198 4.629 15.158 4.629 15.158C5.521 16.708 6.97 16.268 7.539 16.008C7.631 15.368 7.889 14.928 8.175 14.678C5.955 14.428 3.62 13.568 3.62 9.74801C3.62 8.65801 4.01 7.76801 4.649 7.07801C4.546 6.82801 4.203 5.81801 4.747 4.42801C4.747 4.42801 5.586 4.15801 7.497 5.40801C8.31397 5.18601 9.15497 5.07401 9.997 5.07401C10.839 5.07401 11.68 5.18601 12.497 5.40801C14.407 4.15801 15.247 4.42801 15.247 4.42801C15.791 5.81801 15.448 6.82801 15.345 7.07801C15.985 7.76801 16.373 8.65801 16.373 9.74801C16.373 13.578 14.035 14.428 11.811 14.678C12.172 14.988 12.486 15.598 12.486 16.528C12.486 17.858 12.476 18.928 12.476 19.258C12.476 19.528 12.656 19.838 13.165 19.748C17.138 18.428 20 14.653 20 10.208C20 4.68501 15.522 0.208008 10 0.208008Z"
                     fill="#5C6BC0"
                   />
-                </svg>
+                </motion.svg>
 
                 <span
                   style={{
@@ -400,11 +533,12 @@ export function Pricing() {
                 >
                   Start on GitHub
                 </span>
-              </button>
-            </div>
+              </motion.button>
+            </motion.div>
           )}
         </div>
-        </div>
+        </motion.div>
+        </motion.div>
         );
       })}
       </div>

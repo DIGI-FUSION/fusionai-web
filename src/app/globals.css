@@ -35,19 +35,20 @@ body {
   height: auto;
   border-radius: 30px;
 
-  /* Glass tint */
-  background: rgba(0, 0, 0, 0.18);
+  /* Glass tint - more transparent to show refraction */
+  background: rgba(0, 0, 0, 0.08);
 
-  /* Frosted glass refraction */
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  /* Frosted glass refraction - stronger for better distortion visibility */
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
 
-  /* Inner shadow (edge refraction) */
+  /* Inner shadow (edge refraction) - enhanced for liquid glass effect */
   box-shadow:
-    inset 0 0 16px -2px rgba(145,145,145,0.55),
-    inset 0 1px 0 rgba(255,255,255,0.25),
-    inset 0 -1px 0 rgba(0,0,0,0.25),
-    0 24px 48px rgba(0,0,0,0.35);
+    inset 0 0 24px -2px rgba(145,145,145,0.4),
+    inset 0 2px 4px rgba(255,255,255,0.3),
+    inset 0 -2px 4px rgba(0,0,0,0.3),
+    0 24px 48px rgba(0,0,0,0.35),
+    0 0 0 1px rgba(255,255,255,0.1);
 
   overflow: hidden;
   isolation: isolate;
@@ -56,20 +57,22 @@ body {
   transition: transform 0.25s ease-out;
 }
 
-/* Specular highlight (scroll-driven) */
+/* Specular highlight (scroll-driven) - stronger refraction effect */
 .ios-glass::before {
   content: "";
   position: absolute;
   inset: -20%;
   pointer-events: none;
   background: radial-gradient(
-    120% 80% at var(--gloss-x, 60%) var(--gloss-y, 30%),
-    rgba(255,255,255,0.35),
-    rgba(255,255,255,0.12) 40%,
-    transparent 70%
+    140% 90% at var(--gloss-x, 60%) var(--gloss-y, 30%),
+    rgba(255,255,255,0.5),
+    rgba(255,255,255,0.2) 35%,
+    rgba(150,150,255,0.1) 55%,
+    transparent 75%
   );
-  opacity: var(--gloss-opacity, 0.2);
+  opacity: var(--gloss-opacity, 0.25);
   mix-blend-mode: overlay;
+  filter: blur(40px);
 }
 
 /* Glass noise */

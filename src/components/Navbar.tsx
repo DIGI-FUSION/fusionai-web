@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { GetStartedButton } from "@/components/ui/GetStartedButton";
+import { LiquidGlass } from "@/components/animations/LiquidGlass";
 
 type NavItem = { href: string; label: string };
 
@@ -67,12 +68,18 @@ export function Navbar() {
 
   return (
     <div className="pointer-events-none fixed inset-x-0 top-3 z-50 flex justify-center px-3 sm:top-4 md:top-6">
-      <nav
-        ref={ref as any}
-        className="pointer-events-auto ios-glass w-full max-w-[1400px] px-3 sm:px-4"
-        role="navigation"
-        aria-label="Primary"
+      <LiquidGlass
+        className="pointer-events-auto w-full max-w-[1400px]"
+        surfaceType="squircle"
+        refractiveIndex={1.5}
+        maxDisplacement={25}
       >
+        <nav
+          ref={ref as any}
+          className="ios-glass w-full px-3 sm:px-4"
+          role="navigation"
+          aria-label="Primary"
+        >
         <div className="flex h-16 md:h-20 items-center justify-between gap-2 px-2">
           <Link href="/" className="flex items-center gap-2 pl-1 pr-1">
             <div className="relative h-10 md:h-12 w-44 md:w-56 rounded-2xl overflow-hidden">
@@ -157,6 +164,7 @@ export function Navbar() {
           </div>
         )}
       </nav>
+      </LiquidGlass>
     </div>
   );
 }

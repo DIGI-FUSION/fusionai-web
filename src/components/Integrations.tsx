@@ -43,9 +43,9 @@ function AppIcon({
       layoutId={integration.name}
       className="group relative"
       style={{
-        width: "66.23px",
-        height: "66.23px",
-        padding: "11.3077px",
+        width: "clamp(52px, 6vw, 66.23px)",
+        height: "clamp(52px, 6vw, 66.23px)",
+        padding: "clamp(8px, 1.4vw, 11.3077px)",
         background: "linear-gradient(138.52deg, rgba(7, 88, 139, 0.4) 4.09%, rgba(25, 22, 28, 0.4) 74.34%, rgba(21, 19, 23, 0.4) 93.2%)",
         borderRadius: "9.69231px",
         display: "flex",
@@ -325,13 +325,11 @@ export function Integrations() {
         {/* Logos Container with position swapping */}
         <motion.div
           ref={gridRef}
-          className="flex flex-wrap relative"
+          className="flex flex-nowrap justify-center relative overflow-x-auto sm:overflow-visible"
           style={{
             gap: "14px",
             width: "1426px",
             maxWidth: "100%",
-            justifyContent: "center",
-            alignItems: "flex-start",
             margin: "0 auto",
           }}
         >
