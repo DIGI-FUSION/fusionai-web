@@ -1,0 +1,201 @@
+"use client";
+
+import Image from "next/image";
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
+import { AnimatedSection } from "@/components/animations";
+
+interface GalaxyCard {
+  title: string;
+  companies: {
+    name: string;
+    logo: string;
+  }[];
+}
+
+const GALAXIES: GalaxyCard[] = [
+  {
+    title: "AI of Things",
+    companies: [
+      { name: "Mediot", logo: "/aba/mediot.svg" },
+      { name: "FMC24", logo: "/aba/fmc24.svg" },
+      { name: "Digieye", logo: "/aba/DIGIEYE.svg" },
+    ],
+  },
+  {
+    title: "Health-Tech",
+    companies: [
+      { name: "Mediot", logo: "/aba/mediot.svg" },
+      { name: "FMC24", logo: "/aba/fmc24.svg" },
+      { name: "Digieye", logo: "/aba/DIGIEYE.svg" },
+    ],
+  },
+  {
+    title: "Smart Cities",
+    companies: [
+      { name: "Nextcore", logo: "/aba/nextcore.svg" },
+      { name: "Icity", logo: "/aba/Icity.svg" },
+    ],
+  },
+  {
+    title: "Smart Supply Chain",
+    companies: [{ name: "SCX Technology", logo: "/aba/scx.svg" }],
+  },
+  {
+    title: "Industry X.0",
+    companies: [
+      { name: "Hardiot", logo: "/aba/hardiot.svg" },
+      { name: "Mana Technology", logo: "/aba/mana.svg" },
+    ],
+  },
+];
+
+function GalaxyCardComponent({ galaxy, index }: { galaxy: GalaxyCard; index: number }) {
+  const cardRef = useRef(null);
+  const isInView = useInView(cardRef, { once: true, amount: 0.3 });
+
+  return (
+    <motion.div
+      ref={cardRef}
+      className="relative rounded-[20px] p-6 overflow-hidden"
+      style={{
+        background: "linear-gradient(180deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%)",
+        border: "1px solid rgba(255, 255, 255, 0.1)",
+        backdropFilter: "blur(10px)",
+      }}
+      initial={{ opacity: 0, y: 40 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.6, delay: index * 0.1 }}
+    >
+      {/* Card title */}
+      <h3
+        className="text-base font-medium text-white/80 mb-5"
+        style={{
+          fontFamily: "'Be Vietnam Pro', sans-serif",
+          letterSpacing: "0.02em",
+        }}
+      >
+        {galaxy.title}
+      </h3>
+
+      {/* Company logos */}
+      <div className="flex flex-col gap-3">
+        {galaxy.companies.map((company, companyIndex) => (
+          <motion.div
+            key={company.name}
+            className="flex items-center justify-center rounded-[12px] py-4 px-5"
+            style={{
+              background: "linear-gradient(135deg, rgba(66, 133, 244, 0.2) 0%, rgba(66, 133, 244, 0.08) 100%)",
+              border: "1px solid rgba(66, 133, 244, 0.25)",
+            }}
+            initial={{ opacity: 0, x: -20 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.4, delay: index * 0.1 + companyIndex * 0.1 + 0.3 }}
+            whileHover={{
+              scale: 1.02,
+              borderColor: "rgba(66, 133, 244, 0.5)",
+              background: "linear-gradient(135deg, rgba(66, 133, 244, 0.25) 0%, rgba(66, 133, 244, 0.12) 100%)",
+            }}
+          >
+            <Image
+              src={company.logo}
+              alt={company.name}
+              width={160}
+              height={45}
+              className="object-contain"
+              style={{ height: "auto", maxHeight: "45px" }}
+            />
+          </motion.div>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
+export function ABAGalaxies() {
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
+
+  return (
+    <section
+      ref={sectionRef}
+      className="relative py-20 md:py-32 px-6 overflow-hidden"
+      style={{
+        background: "#13161B",
+      }}
+    >
+      {/* Background glow effects */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div
+          className="absolute rounded-full"
+          style={{
+            width: "500px",
+            height: "500px",
+            right: "10%",
+            bottom: "20%",
+            background: "rgba(147, 51, 234, 0.15)",
+            filter: "blur(150px)",
+          }}
+        />
+        <div
+          className="absolute rounded-full"
+          style={{
+            width: "400px",
+            height: "400px",
+            right: "30%",
+            bottom: "10%",
+            background: "rgba(66, 133, 244, 0.1)",
+            filter: "blur(150px)",
+          }}
+        />
+      </div>
+
+      <div className="max-w-[1200px] mx-auto relative z-10">
+        {/* Section header */}
+        <AnimatedSection delay={0.2}>
+          <div className="text-center mb-16">
+            <h2
+              className="text-2xl sm:text-3xl md:text-4xl font-semibold text-white mb-3"
+              style={{
+                fontFamily: "'Be Vietnam Pro', sans-serif",
+                letterSpacing: "0.02em",
+              }}
+            >
+              Aba Technology&apos;s Galaxies
+            </h2>
+            <p
+              className="text-white/50 text-sm md:text-base"
+              style={{ fontFamily: "'Be Vietnam Pro', sans-serif" }}
+            >
+              Integrated & global actor in AIoT&apos;s value chain
+            </p>
+          </div>
+        </AnimatedSection>
+
+        {/* Galaxy cards grid - 3 columns for first row, 2 columns for second row */}
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.5 }}
+        >
+          {GALAXIES.slice(0, 3).map((galaxy, index) => (
+            <GalaxyCardComponent key={galaxy.title} galaxy={galaxy} index={index} />
+          ))}
+        </motion.div>
+
+        {/* Second row - 2 cards centered */}
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 max-w-[800px] mx-auto lg:max-w-none lg:grid-cols-2 lg:px-[200px]"
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          {GALAXIES.slice(3).map((galaxy, index) => (
+            <GalaxyCardComponent key={galaxy.title} galaxy={galaxy} index={index + 3} />
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}

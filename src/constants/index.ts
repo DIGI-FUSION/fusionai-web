@@ -6,3 +6,4 @@ export * from './useCases';
 export * from './pricing';
 export * from './paths';
 export * from './social';
+export * from './industries';

@@ -13,7 +13,7 @@ export const PRICING_PLANS = [
     subtitle: "/per 1 month",
     description: "/per 1 month",
     feature: "For teams and professionals",
-    hasButtons: true,
+    hasButtons: false,
     highlighted: false,
   },
   {
@@ -22,7 +22,7 @@ export const PRICING_PLANS = [
     subtitle: "/per 1 month",
     description: "/per 1 month",
     feature: "For organizations with custom needs",
-    hasButtons: true,
+    hasButtons: false,
     highlighted: false,
   },
 ];

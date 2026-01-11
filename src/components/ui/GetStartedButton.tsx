@@ -19,7 +19,7 @@ export const GetStartedButton = forwardRef<
       ref={ref}
       variant={variant}
       size={size}
-      className={cn("px-8", className)}
+      className={cn("whitespace-nowrap px-6 sm:px-8", className)}
       {...props}
     >
       Get Started

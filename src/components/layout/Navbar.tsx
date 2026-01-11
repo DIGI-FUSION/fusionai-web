@@ -6,11 +6,14 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { GetStartedButton } from "@/components/ui/GetStartedButton";
 import { LiquidGlass } from "@/components/animations/LiquidGlass";
-import { NAV_ITEMS } from "@/constants";
+import { NAV_ITEMS, type NavItem } from "@/constants";
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [mobileExpandedItem, setMobileExpandedItem] = useState<string | null>(null);
   const ref = useRef<HTMLElement | null>(null);
+  const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // iOS 26-like liquid glass highlight follows scroll subtly
   useEffect(() => {
@@ -58,7 +61,28 @@ export function Navbar() {
     };
   }, []);
 
+  const handleDropdownEnter = (label: string) => {
+    if (dropdownTimeoutRef.current) {
+      clearTimeout(dropdownTimeoutRef.current);
+      dropdownTimeoutRef.current = null;
+    }
+    setActiveDropdown(label);
+  };
+
+  const handleDropdownLeave = () => {
+    dropdownTimeoutRef.current = setTimeout(() => {
+      setActiveDropdown(null);
+    }, 150);
+  };
+
+  const toggleMobileExpanded = (label: string) => {
+    setMobileExpandedItem((prev) => (prev === label ? null : label));
+  };
+
+  const dropdownItem = NAV_ITEMS.find((item) => item.subItems && item.label === activeDropdown);
+
   return (
+    <>
     <div className="pointer-events-none fixed inset-x-0 top-3 z-50 flex justify-center px-3 sm:top-4 md:top-6">
       <LiquidGlass
         className="pointer-events-auto w-full max-w-[1400px]"
@@ -87,15 +111,40 @@ export function Navbar() {
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center justify-center gap-12">
-            {NAV_ITEMS.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="text-[20px] text-white/85 tracking-wide hover:text-white transition-colors"
-              >
-                {item.label}
-              </Link>
-            ))}
+            {NAV_ITEMS.map((item) =>
+              item.subItems ? (
+                <div
+                  key={item.href}
+                  className="relative"
+                  onMouseEnter={() => handleDropdownEnter(item.label)}
+                  onMouseLeave={handleDropdownLeave}
+                >
+                  <button
+                    type="button"
+                    className="flex items-center gap-1.5 text-[20px] text-white/85 tracking-wide hover:text-white transition-colors"
+                    onClick={() => setActiveDropdown(activeDropdown === item.label ? null : item.label)}
+                  >
+                    {item.label}
+                    <svg
+                      className={`size-4 transition-transform duration-200 ${activeDropdown === item.label ? "rotate-180" : ""}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                </div>
+              ) : (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="text-[20px] text-white/85 tracking-wide hover:text-white transition-colors"
+                >
+                  {item.label}
+                </Link>
+              )
+            )}
           </div>
 
           {/* Desktop CTAs */}
@@ -134,18 +183,52 @@ export function Navbar() {
 
         {/* Mobile panel */}
         {open && (
-          <div className="md:hidden border-t border-white/10 px-4 py-4">
+          <div className="md:hidden border-t border-white/10 px-4 py-4 bg-[#0a0a12]/95 backdrop-blur-2xl rounded-b-[30px]">
             <div className="flex flex-col gap-2">
-              {NAV_ITEMS.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setOpen(false)}
-                  className="rounded-lg px-3 py-2 text-base text-white/85 hover:bg-white/5 hover:text-white"
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {NAV_ITEMS.map((item) =>
+                item.subItems ? (
+                  <div key={item.href}>
+                    <button
+                      type="button"
+                      onClick={() => toggleMobileExpanded(item.label)}
+                      className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-base text-white/85 hover:bg-white/5 hover:text-white"
+                    >
+                      {item.label}
+                      <svg
+                        className={`size-4 transition-transform duration-200 ${mobileExpandedItem === item.label ? "rotate-180" : ""}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    {mobileExpandedItem === item.label && (
+                      <div className="mt-2 flex flex-col gap-1 rounded-xl bg-[#0a0a12]/95 backdrop-blur-xl border border-white/10 p-3">
+                        {item.subItems.map((subItem) => (
+                          <Link
+                            key={subItem.href}
+                            href={subItem.href}
+                            onClick={() => setOpen(false)}
+                            className="rounded-lg px-3 py-2.5 text-sm text-white/85 hover:bg-white/10 hover:text-white transition-colors"
+                          >
+                            {subItem.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setOpen(false)}
+                    className="rounded-lg px-3 py-2 text-base text-white/85 hover:bg-white/5 hover:text-white"
+                  >
+                    {item.label}
+                  </Link>
+                )
+              )}
               <div className="mt-2 flex items-center gap-2">
                 <Button variant="glass" size="md" className="flex-1">
                   Login
@@ -158,5 +241,33 @@ export function Navbar() {
       </nav>
       </LiquidGlass>
     </div>
+
+    {/* Desktop dropdown panel - rendered outside LiquidGlass to avoid clipping */}
+    {activeDropdown && dropdownItem && (
+      <div
+        className="pointer-events-auto fixed inset-x-0 top-[120px] z-[60] hidden md:flex justify-center px-3"
+        onMouseEnter={() => handleDropdownEnter(activeDropdown)}
+        onMouseLeave={handleDropdownLeave}
+      >
+        <div className="w-full max-w-[1400px] rounded-2xl border border-white/15 p-6 bg-[#0a0a12]/90 backdrop-blur-xl shadow-2xl shadow-black/50">
+          <h3 className="text-white/60 text-sm font-medium tracking-wider uppercase mb-4 px-2">
+            {dropdownItem.label}
+          </h3>
+          <div className="grid grid-cols-3 gap-2">
+            {dropdownItem.subItems?.map((subItem) => (
+              <Link
+                key={subItem.href}
+                href={subItem.href}
+                onClick={() => setActiveDropdown(null)}
+                className="rounded-lg px-4 py-3 text-[15px] text-white/85 hover:bg-white/10 hover:text-white transition-colors"
+              >
+                {subItem.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
 
 import { GetStartedButton } from "@/components/ui/GetStartedButton";
@@ -8,7 +8,21 @@ import { PRICING_PLANS } from "@/constants";
 
 export function Pricing() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // track small viewport to disable outer decorative borders on mobile
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 640px)");
+    const onChange = (e: MediaQueryListEvent | MediaQueryList) => setIsMobile((e as any).matches);
+    setIsMobile(mq.matches);
+    if (mq.addEventListener) mq.addEventListener("change", onChange as any);
+    else mq.addListener(onChange as any);
+    return () => {
+      if (mq.removeEventListener) mq.removeEventListener("change", onChange as any);
+      else mq.removeListener(onChange as any);
+    };
+  }, []);
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -18,7 +32,7 @@ export function Pricing() {
   const backgroundY = useTransform(scrollYProgress, [0, 1], [50, -50]);
   
   return (
-    <section ref={containerRef} className="relative py-20 px-6 bg-background/95 backdrop-blur-sm overflow-hidden">
+    <section ref={containerRef} className="pricing-section relative py-20 px-6 bg-background/95 backdrop-blur-sm overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {/* Floating orbs */}
@@ -72,10 +86,11 @@ export function Pricing() {
           margin: "0 auto",
           display: "flex",
           flexDirection: "row",
-          alignItems: "center",
+          alignItems: "flex-start",
           padding: "0 24px",
           gap: "24px",
           justifyContent: "center",
+          flexWrap: "wrap",
         }}
       >
         {PRICING_PLANS.map((plan, index) => {
@@ -83,6 +98,7 @@ export function Pricing() {
         const shouldShowButtons = plan.hasButtons || isHovered;
         const shouldHighlight = plan.highlighted || isHovered;
         const shouldShowBorder = plan.highlighted || isHovered;
+        const shouldShowBorderMobileAware = shouldShowBorder && !isMobile;
         
         return (
         <motion.div
@@ -103,14 +119,20 @@ export function Pricing() {
           onMouseLeave={() => setHoveredIndex(null)}
           style={{
             perspective: 1000,
+            // allow cards to shrink on small screens and have consistent spacing
+            minWidth: 280,
+            maxWidth: 384,
+            width: "100%",
+            flex: "1 1 320px",
+            boxSizing: "border-box",
           }}
         >
           <motion.div
             style={{
-              padding: shouldShowBorder ? "1px" : "0px",
+              padding: shouldShowBorderMobileAware ? "1px" : "0px",
               borderRadius: "30px",
-              background: shouldShowBorder 
-                ? "linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 100%)" 
+              background: shouldShowBorderMobileAware
+                ? "linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 100%)"
                 : "transparent",
               position: "relative",
             }}
@@ -138,7 +160,8 @@ export function Pricing() {
             
  
 
-          <div
+            <div
+              className="pricing-card-inner"
             style={{
               boxSizing: "border-box",
               display: "flex",
@@ -146,8 +169,8 @@ export function Pricing() {
               alignItems: "flex-start",
               padding: shouldShowBorder ? "34px 32px" : "35px 33px",
               gap: "48px",
-              width: "384px",
-              height: "422px",
+              width: "100%",
+              minHeight: "420px",
               backgroundColor: "#0a0f1e",
               backgroundImage: shouldHighlight
                 ? "linear-gradient(180deg, rgba(21, 19, 23, 0.6) 1.44%, rgba(25, 22, 28, 0.6) 19.71%, rgba(7, 32, 50, 0.6) 65.38%, rgba(0, 36, 59, 0.6) 99.52%)"
@@ -180,8 +203,8 @@ export function Pricing() {
               alignItems: "center",
               padding: "12px 0px 24px",
               gap: "10px",
-              width: "320px",
-              height: "57px",
+              width: "100%",
+              height: "auto",
               borderBottom: shouldHighlight ? "1px solid #D2D2D2" : "1px solid #514B4B",
               flex: "none",
               order: 0,
@@ -193,8 +216,8 @@ export function Pricing() {
           >
             <motion.h3
               style={{
-                width: "320px",
-                height: "21px",
+                width: "100%",
+                height: "auto",
                 fontFamily: "'Be Vietnam Pro'",
                 fontStyle: "normal",
                 fontWeight: 500,
@@ -214,23 +237,24 @@ export function Pricing() {
           </motion.div>
 
           {/* Price Section */}
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              padding: "0px",
-              gap: "12px",
-              width: index === 0 ? "317px" : "318px",
-              height: "83px",
+              <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                padding: "0px",
+                gap: "12px",
+                width: "100%",
+                height: "auto",
               flex: "none",
               order: 1,
               flexGrow: 0,
             }}
           >
             <motion.div
+              className="pricing-price"
               style={{
-                width: index === 0 ? "317px" : "318px",
+                width: "100%",
                 height: "45px",
                 fontFamily: "'Be Vietnam Pro'",
                 fontStyle: "normal",
@@ -253,10 +277,10 @@ export function Pricing() {
             >
               {plan.price}
             </motion.div>
-            <div
+              <div
               style={{
-                width: index === 0 ? "242px" : "98px",
-                height: "26px",
+                width: "100%",
+                height: "auto",
                 fontFamily: "'Be Vietnam Pro'",
                 fontStyle: "normal",
                 fontWeight: 400,
@@ -280,8 +304,8 @@ export function Pricing() {
               alignItems: "center",
               padding: "0px",
               gap: "24px",
-              width: index === 0 ? "308px" : index === 1 ? "262px" : "328px",
-              height: "26px",
+              width: "100%",
+              height: "auto",
               flex: "none",
               order: 2,
               flexGrow: 0,
@@ -403,8 +427,8 @@ export function Pricing() {
             {/* Feature Text */}
             <motion.span
               style={{
-                width: index === 0 ? "266px" : index === 1 ? "220px" : "286px",
-                height: "26px",
+                width: "100%",
+                height: "auto",
                 fontFamily: "'Be Vietnam Pro'",
                 fontStyle: "normal",
                 fontWeight: 400,
@@ -423,29 +447,31 @@ export function Pricing() {
           </motion.div>
 
           {/* Buttons Section */}
-          {shouldShowButtons && (
+            {shouldShowButtons && (
             <motion.div
+              className="pricing-buttons"
               style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "flex-start",
-                padding: "0px",
-                gap: "14px",
-                width: "320px",
-                height: "44px",
-                flex: "none",
-                order: 3,
-                alignSelf: "stretch",
-                flexGrow: 0,
-              }}
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "flex-start",
+                  padding: "0px",
+                  gap: "14px",
+                  width: "100%",
+                  height: "44px",
+                  flex: "none",
+                  order: 3,
+                  alignSelf: "stretch",
+                  flexGrow: 0,
+                }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 + index * 0.1, duration: 0.5 }}
             >
-              <GetStartedButton size="md" className="flex-1" />
+              <GetStartedButton size="md" className="flex-1 pricing-primary-btn" />
 
               {/* Start on GitHub Button */}
               <motion.button
+                className="pricing-ghost-btn"
                 style={{
                   boxSizing: "border-box",
                   display: "flex",

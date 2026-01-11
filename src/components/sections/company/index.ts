@@ -1,1 +1,3 @@
-// Placeholder for future company page sections
+export { CompanyHero } from "./CompanyHero";
+export { TrustedBy } from "./TrustedBy";
+export { ABAGalaxies } from "./ABAGalaxies";
