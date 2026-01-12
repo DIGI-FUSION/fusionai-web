@@ -4,15 +4,16 @@ import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { GetStartedButton } from "@/components/ui/GetStartedButton";
-import { AnimatedSection, GlowOrb } from "@/components/animations";
+import { AnimatedSection } from "@/components/animations/AnimatedSection";
+import { GlowOrb } from "@/components/animations/FloatingElements";
 
 export function AboutABA() {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.3 });
 
   return (
-    <section ref={sectionRef} className="relative py-12 sm:py-20 px-4 sm:px-6 overflow-hidden bg-background/95 backdrop-blur-sm">
-      <div className="max-w-[1200px] mx-auto">
+    <section ref={sectionRef} className="relative min-h-screen py-8 sm:py-12 px-4 sm:px-6 overflow-hidden bg-background/95 backdrop-blur-sm flex items-center">
+      <div className="w-full max-w-[1200px] mx-auto">
         {/* Background glow effects - now animated */}
         <div className="absolute inset-0 -z-10 pointer-events-none">
           <GlowOrb
@@ -62,15 +63,17 @@ export function AboutABA() {
 
         {/* Main card with reveal animation */}
         <motion.div
-          className="relative overflow-hidden w-full max-w-[1200px] mx-auto"
-          initial={{ opacity: 0, y: 60, scale: 0.95 }}
+          className="relative overflow-hidden w-full mx-auto flex flex-col justify-between"
+          initial={{ opacity: 0, y: 30, scale: 0.98 }}
           animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-          transition={{ duration: 0.8, ease: [0.25, 0.4, 0.25, 1] }}
+          transition={{ duration: 0.7, ease: [0.25, 0.4, 0.25, 1] }}
           style={{
-            minHeight: "500px",
+            minHeight: "483px",
+            maxHeight: "min(calc(100vh - 120px), 874px)",
             background: "radial-gradient(62.57% 43.74% at 50% 56.26%, rgba(0, 36, 59, 0.6) 0.48%, rgba(7, 32, 50, 0.6) 37.98%, rgba(21, 19, 23, 0.6) 98.56%)",
             backdropFilter: "blur(10px)",
             borderRadius: "20px",
+            padding: "21px",
           }}
         >
           {/* Animated border glow */}
@@ -109,7 +112,7 @@ export function AboutABA() {
           />
 
           {/* Title and subtitle with stagger */}
-          <div className="relative text-center pt-8 sm:pt-16 px-4 z-10">
+          <div className="relative text-center pt-7 sm:pt-12 px-4 z-10">
             <AnimatedSection delay={0.3}>
               <h2
                 className="text-2xl sm:text-3xl md:text-[42px] mb-2"
@@ -140,32 +143,34 @@ export function AboutABA() {
 
           {/* SVG Container with scale animation */}
           <motion.div
-            className="relative flex items-center justify-center z-10 px-4 mt-8 sm:mt-12"
-            initial={{ opacity: 0, scale: 0.9 }}
+            className="relative flex items-center justify-center z-10 px-4 mt-4 sm:mt-6 flex-1"
+            initial={{ opacity: 0, scale: 0.98 }}
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 0.8, delay: 0.5, ease: [0.25, 0.4, 0.25, 1] }}
+            transition={{ duration: 0.6, delay: 0.3, ease: [0.25, 0.4, 0.25, 1] }}
           >
-            <Image
-              src="/aboutABA.svg"
-              alt="ABA Fusion AI platform diagram"
-              width={1000}
-              height={500}
-              className="w-full max-w-[1000px] h-auto object-contain"
-              priority
-              style={{
-                filter: "drop-shadow(0 0 20px rgba(66, 133, 244, 0.15))",
-                height: 'auto',
-              }}
-            />
+            <div className="w-full flex items-center justify-center">
+              <Image
+                src="/aboutABA.svg"
+                alt="ABA Fusion AI platform diagram"
+                width={1200}
+                height={600}
+                className="w-full max-w-[1300px] h-auto object-contain"
+                priority
+                style={{
+                  filter: "drop-shadow(0 0 20px rgba(66, 133, 244, 0.15))",
+                  maxHeight: 'clamp(230px, 52vh, 800px)'
+                }}
+              />
+            </div>
           </motion.div>
 
           {/* Get Started button with hover effect */}
           <motion.div
-            className="relative flex justify-center z-10 pb-8 sm:pb-12 mt-8 sm:mt-12"
-            initial={{ opacity: 0, y: 20 }}
+            className="relative flex justify-center z-10 pb-4 sm:pb-6 mt-3 sm:mt-4"
+            initial={{ opacity: 0, y: 6 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.7 }}
-            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.4, delay: 0.45 }}
+            whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
             <GetStartedButton size="md" />

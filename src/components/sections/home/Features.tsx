@@ -3,8 +3,8 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { GradientCard } from "@/components/ui/GradientCard";
-import { AnimatedSection, StaggerContainer, StaggerItem } from "@/components/animations";
-import { FEATURES } from "@/constants";
+import { AnimatedSection, StaggerContainer, StaggerItem } from "@/components/animations/AnimatedSection";
+import { FEATURES } from "@/constants/features";
 
 export function Features() {
   return (

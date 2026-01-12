@@ -3,11 +3,11 @@
 import Image from "next/image";
 import { GradientCard } from "@/components/ui/GradientCard";
 import { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 
-import { KEY_FEATURES } from "@/constants";
+import { KEY_FEATURES } from "@/constants/features";
 
-// Animated feature card with 3D transforms
+// Optimized feature card - removed expensive 3D transforms and infinite animations
 function FeatureCard({
   feature,
   index,
@@ -19,87 +19,49 @@ function FeatureCard({
   isActive: boolean;
   onClick: () => void;
 }) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const rotateX = useSpring(useTransform(y, [-100, 100], [10, -10]), { stiffness: 300, damping: 30 });
-  const rotateY = useSpring(useTransform(x, [-100, 100], [-10, 10]), { stiffness: 300, damping: 30 });
-
-  function handleMouse(e: React.MouseEvent) {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    x.set(e.clientX - rect.left - rect.width / 2);
-    y.set(e.clientY - rect.top - rect.height / 2);
-  }
-
-  function handleMouseLeave() {
-    x.set(0);
-    y.set(0);
-  }
-
   return (
     <motion.div
-      ref={cardRef}
       onClick={onClick}
-      onMouseMove={handleMouse}
-      onMouseLeave={handleMouseLeave}
       className="relative cursor-pointer"
-      style={{
-        perspective: 1000,
-        transformStyle: "preserve-3d",
-      }}
-      initial={{ opacity: 0, y: 50, rotateX: -15 }}
-      animate={{ 
-        opacity: 1, 
-        y: 0, 
-        rotateX: 0,
+      initial={{ opacity: 0, y: 30 }}
+      animate={{
+        opacity: 1,
+        y: 0,
         scale: isActive ? 1 : 0.85,
-        filter: isActive ? "none" : "brightness(0.6)",
       }}
-      transition={{ 
-        duration: 0.6,
-        delay: index * 0.08,
-        ease: [0.25, 0.4, 0.25, 1] as const,
+      transition={{
+        duration: 0.4,
+        delay: index * 0.05,
+        ease: "easeOut",
       }}
     >
       <motion.div
-        className="relative rounded-xl overflow-hidden"
+        className="relative rounded-xl overflow-hidden transition-shadow duration-300"
         style={{
-          rotateX: isActive ? rotateX : 0,
-          rotateY: isActive ? rotateY : 0,
-          transformStyle: "preserve-3d",
           width: "clamp(60px, 15vw, 100px)",
           height: "clamp(60px, 15vw, 100px)",
           background: `linear-gradient(135deg, ${feature.color}20, transparent)`,
           border: isActive ? `2px solid ${feature.color}` : "2px solid rgba(255,255,255,0.1)",
           boxShadow: isActive ? `0 0 30px ${feature.color}40` : "none",
+          filter: isActive ? "none" : "brightness(0.6)",
+          willChange: isActive ? "transform" : "auto",
         }}
         whileHover={{ scale: isActive ? 1.05 : 0.95 }}
-        transition={{ type: "spring", stiffness: 400, damping: 17 }}
+        transition={{ type: "spring", stiffness: 400, damping: 25 }}
       >
-        {/* Animated gradient background */}
-        <motion.div
+        {/* Static gradient background - no animation */}
+        <div
           className="absolute inset-0"
-          animate={{
-            background: [
-              `radial-gradient(circle at 20% 20%, ${feature.color}30, transparent 50%)`,
-              `radial-gradient(circle at 80% 80%, ${feature.color}30, transparent 50%)`,
-              `radial-gradient(circle at 20% 20%, ${feature.color}30, transparent 50%)`,
-            ],
+          style={{
+            background: `radial-gradient(circle at 50% 50%, ${feature.color}25, transparent 60%)`,
           }}
-          transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
         />
-        
-        {/* Icon - centered */}
+
+        {/* Icon - centered, no animation */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <motion.div
+          <div
             className="relative"
             style={{ width: "clamp(20px, 6vw, 40px)", height: "clamp(20px, 6vw, 40px)" }}
-            animate={isActive ? {
-              y: [0, -3, 0],
-              rotate: [0, 5, 0, -5, 0],
-            } : {}}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           >
             <Image
               src={feature.icon}
@@ -108,81 +70,75 @@ function FeatureCard({
               sizes="40px"
               className="object-contain"
             />
-          </motion.div>
+          </div>
         </div>
 
-        {/* Glowing ring effect */}
+        {/* Glowing ring effect - CSS animation instead of Framer */}
         {isActive && (
-          <motion.div
-            className="absolute inset-0 rounded-2xl"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: [0.3, 0.6, 0.3] }}
-            transition={{ duration: 2, repeat: Infinity }}
+          <div
+            className="absolute inset-0 rounded-2xl animate-pulse"
             style={{
               border: `2px solid ${feature.color}`,
               boxShadow: `inset 0 0 20px ${feature.color}40`,
+              opacity: 0.5,
             }}
           />
         )}
       </motion.div>
-      
+
       {/* Mini title */}
-      <motion.p
-        className="text-center mt-1 sm:mt-2 text-[8px] sm:text-[10px] font-medium"
+      <p
+        className="text-center mt-1 sm:mt-2 text-[8px] sm:text-[10px] font-medium transition-colors duration-300"
         style={{
           color: isActive ? feature.color : "rgba(255,255,255,0.5)",
           maxWidth: "clamp(60px, 15vw, 100px)",
+          opacity: isActive ? 1 : 0.5,
         }}
-        animate={{ opacity: isActive ? 1 : 0.5 }}
       >
         {feature.title.replace("FUSION ", "")}
-      </motion.p>
+      </p>
     </motion.div>
   );
 }
 
-// Main expanded card content
-function ExpandedContent({ feature, index }: { feature: (typeof KEY_FEATURES)[0]; index: number }) {
-  // Fixed particle positions - no randomness
-  const particles = Array.from({ length: 20 }, (_, i) => ({
-    left: (i * 23 + 17) % 100,
+// Optimized expanded content - reduced particles from 20 to 8, CSS animations for ring
+function ExpandedContent({ feature, index, isVisible }: { feature: (typeof KEY_FEATURES)[0]; index: number; isVisible: boolean }) {
+  // Reduced particle count from 20 to 8
+  const particles = Array.from({ length: 8 }, (_, i) => ({
+    left: (i * 29 + 17) % 100,
     top: (i * 37 + 13) % 100,
-    duration: 3 + (i % 5) * 0.4,
-    delay: (i % 10) * 0.2,
   }));
 
   return (
     <motion.div
       key={feature.title}
-      initial={{ opacity: 0, x: 50, scale: 0.9 }}
-      animate={{ opacity: 1, x: 0, scale: 1 }}
-      exit={{ opacity: 0, x: -50, scale: 0.9 }}
-      transition={{ duration: 0.5, ease: [0.25, 0.4, 0.25, 1] as const }}
-      className="w-full h-full flex items-center"
+      initial={{ opacity: 0, x: 30 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -30 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="w-full h-full flex items-center justify-center"
     >
       <GradientCard
         variant="gradient-bg"
         width="100%"
         height="auto"
         padding="clamp(16px, 4vw, 48px)"
-        className="flex flex-col sm:flex-row items-center relative overflow-hidden min-h-[400px] sm:min-h-[360px]"
+        className="w-full max-w-5xl flex flex-col sm:flex-row items-center relative overflow-hidden min-h-[400px] sm:min-h-[360px] mx-auto"
       >
-        {/* Animated ring with static icon - absolute top left of card */}
+        {/* Rotating ring with CSS animation - much more performant than Framer */}
         <div
           className="absolute top-4 left-4 sm:top-6 sm:left-6 z-20"
           style={{ width: "clamp(36px, 8vw, 60px)", height: "clamp(36px, 8vw, 60px)" }}
         >
-          {/* Rotate only the conic gradient ring */}
-          <motion.div
-            className="absolute inset-0 rounded-full"
+          {/* CSS animated ring - GPU accelerated */}
+          <div
+            className="absolute inset-0 rounded-full animate-spin-slow"
             style={{
               background: `conic-gradient(from 0deg, ${feature.color}, transparent, ${feature.color})`,
               filter: "blur(3px)",
             }}
-            animate={{ rotate: 360 }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
           />
-          {/* Keep the icon static */}
+          {/* Static icon */}
           <div
             className="absolute inset-1 rounded-full flex items-center justify-center"
             style={{ background: "rgba(0,0,0,0.8)" }}
@@ -197,34 +153,28 @@ function ExpandedContent({ feature, index }: { feature: (typeof KEY_FEATURES)[0]
           </div>
         </div>
 
-        {/* Animated background particles */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {particles.map((particle, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-1 h-1 rounded-full"
-              style={{
-                background: feature.color,
-                left: `${particle.left}%`,
-                top: `${particle.top}%`,
-              }}
-              animate={{
-                y: [0, -100, 0],
-                opacity: [0, 1, 0],
-                scale: [0, 1.5, 0],
-              }}
-              transition={{
-                duration: particle.duration,
-                repeat: Infinity,
-                delay: particle.delay,
-              }}
-            />
-          ))}
-        </div>
+        {/* Optimized particles - only render when visible, reduced count, CSS animation */}
+        {isVisible && (
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {particles.map((particle, i) => (
+              <div
+                key={i}
+                className="absolute w-1 h-1 rounded-full animate-float-particle"
+                style={{
+                  background: feature.color,
+                  left: `${particle.left}%`,
+                  top: `${particle.top}%`,
+                  animationDelay: `${i * 0.3}s`,
+                  opacity: 0,
+                }}
+              />
+            ))}
+          </div>
+        )}
 
         {/* Left side - Text content */}
         <div className="flex flex-col items-start justify-center flex-1 sm:pr-6 md:pr-8 relative z-10 pt-12 sm:pt-16 w-full">
-          {/* Title with typewriter effect */}
+          {/* Title */}
           <motion.h3
             className="font-bold mb-3 sm:mb-4"
             style={{
@@ -233,62 +183,54 @@ function ExpandedContent({ feature, index }: { feature: (typeof KEY_FEATURES)[0]
               WebkitTextFillColor: "transparent",
               fontSize: "clamp(18px, 5vw, 36px)",
             }}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+            transition={{ delay: 0.15, duration: 0.3 }}
           >
             {feature.title}
           </motion.h3>
 
-          {/* Description with staggered words */}
+          {/* Description */}
           <motion.p
             className="text-sm sm:text-base text-white/80 leading-relaxed max-w-xl"
             style={{ textAlign: "left" }}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+            transition={{ delay: 0.2, duration: 0.3 }}
           >
             {feature.description}
           </motion.p>
 
-          {/* Animated progress indicator */}
+          {/* Progress indicator - simplified, no layoutId animation */}
           <div className="mt-6 sm:mt-8 flex items-center gap-2">
             {KEY_FEATURES.map((_, i) => (
-              <motion.div
+              <div
                 key={i}
-                className="h-1 rounded-full"
+                className="h-1 rounded-full transition-all duration-300"
                 style={{
                   width: i === index ? "40px" : "8px",
                   background: i === index ? feature.color : "rgba(255,255,255,0.2)",
                 }}
-                layoutId={`progress-${i}`}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
               />
             ))}
           </div>
         </div>
 
-        {/* Right side - Image with floating animation */}
-        <motion.div
-          className="relative mt-6 sm:mt-0 flex-shrink-0"
-          style={{ width: "clamp(180px, 50vw, 400px)", height: "clamp(180px, 50vw, 400px)" }}
-          animate={{
-            y: [0, -15, 0],
+        {/* Right side - Image with CSS float animation */}
+        <div
+          className="relative mt-6 sm:mt-0 flex-shrink-0 animate-float"
+          style={{
+            width: "clamp(180px, 50vw, 400px)",
+            height: "clamp(180px, 50vw, 400px)",
           }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
         >
-          {/* Glowing backdrop */}
-          <motion.div
+          {/* Static glowing backdrop - no animation */}
+          <div
             className="absolute inset-0 rounded-full"
             style={{
-              background: `radial-gradient(circle, ${feature.color}40, transparent 70%)`,
+              background: `radial-gradient(circle, ${feature.color}30, transparent 70%)`,
               filter: "blur(40px)",
             }}
-            animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.5, 0.8, 0.5],
-            }}
-            transition={{ duration: 3, repeat: Infinity }}
           />
 
           <Image
@@ -298,7 +240,7 @@ function ExpandedContent({ feature, index }: { feature: (typeof KEY_FEATURES)[0]
             sizes="(max-width: 640px) 180px, (max-width: 768px) 240px, 400px"
             className="object-contain relative z-10"
           />
-        </motion.div>
+        </div>
       </GradientCard>
     </motion.div>
   );
@@ -307,70 +249,72 @@ function ExpandedContent({ feature, index }: { feature: (typeof KEY_FEATURES)[0]
 export function KeyFeatures() {
   const [activeIndex, setActiveIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"],
-  });
+  const isInView = useInView(containerRef, { once: false, amount: 0.2 });
 
-  const headerY = useTransform(scrollYProgress, [0, 0.3], [100, 0]);
-  const headerOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 1]);
+  // Pause state: timestamp (ms) until which auto-rotate should be paused
+  const [pausedUntil, setPausedUntil] = useState<number | null>(null);
+  const lastRotateRef = useRef<number>(Date.now());
 
-  // Auto-rotate through features
+  // Auto-rotate through features - only when in view and not paused
   useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % KEY_FEATURES.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
+    if (!isInView) return;
+
+    const tick = setInterval(() => {
+      const now = Date.now();
+      // if paused, do nothing
+      if (pausedUntil && now < pausedUntil) return;
+
+      // rotate every 5000ms since last rotation
+      if (now - lastRotateRef.current >= 5000) {
+        setActiveIndex((prev) => (prev + 1) % KEY_FEATURES.length);
+        lastRotateRef.current = now;
+      }
+    }, 500);
+
+    return () => clearInterval(tick);
+  }, [isInView, pausedUntil]);
+
+  function handleFeatureClick(idx: number) {
+    setActiveIndex(idx);
+    // pause auto-rotate for 40 seconds
+    const until = Date.now() + 40000;
+    setPausedUntil(until);
+    lastRotateRef.current = Date.now();
+  }
 
   return (
     <section ref={containerRef} className="relative py-12 sm:py-24 bg-background/95 backdrop-blur-sm overflow-hidden">
-      {/* Animated background grid */}
-      <div className="absolute inset-0 pointer-events-none">
-        <motion.div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `
-              linear-gradient(rgba(69, 135, 244, 0.03) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(69, 135, 244, 0.03) 1px, transparent 1px)
-            `,
-            backgroundSize: "50px 50px",
-          }}
-          animate={{
-            backgroundPosition: ["0px 0px", "50px 50px"],
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        />
-      </div>
+      {/* Static background grid - no animation */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-50"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(69, 135, 244, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(69, 135, 244, 0.03) 1px, transparent 1px)
+          `,
+          backgroundSize: "50px 50px",
+        }}
+      />
 
-      {/* Header */}
+      {/* Header - simplified, no scroll-based animation */}
       <motion.div
         className="text-center mb-6 sm:mb-8 px-4 sm:px-6"
-        style={{ y: headerY, opacity: headerOpacity }}
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
       >
-        <motion.h2
-          className="text-2xl sm:text-3xl md:text-5xl font-medium text-white mb-2"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
+        <h2 className="text-2xl sm:text-3xl md:text-5xl font-medium text-white mb-2">
           Key Features
-        </motion.h2>
-        <motion.p
-          className="text-white/60 text-sm sm:text-base md:text-lg"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-        >
+        </h2>
+        <p className="text-white/60 text-sm sm:text-base md:text-lg">
           Tools to automate, connect, and simplify your work.
-        </motion.p>
+        </p>
       </motion.div>
 
-      {/* Features Grid - Radial layout */}
+      {/* Features Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        {/* Feature cards orbit */}
+        {/* Feature cards */}
         <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-4 sm:mb-6">
           {KEY_FEATURES.map((feature, idx) => (
             <FeatureCard
@@ -378,7 +322,7 @@ export function KeyFeatures() {
               feature={feature}
               index={idx}
               isActive={idx === activeIndex}
-              onClick={() => setActiveIndex(idx)}
+              onClick={() => handleFeatureClick(idx)}
             />
           ))}
         </div>
@@ -390,6 +334,7 @@ export function KeyFeatures() {
               key={activeIndex}
               feature={KEY_FEATURES[activeIndex]}
               index={activeIndex}
+              isVisible={isInView}
             />
           </AnimatePresence>
         </div>

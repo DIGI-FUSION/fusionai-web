@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { AnimatedSection, StaggerContainer, StaggerItem } from "@/components/animations";
+import { AnimatedSection, StaggerContainer, StaggerItem } from "@/components/animations/AnimatedSection";
 import { Industry } from "@/constants/industries";
 
 interface IndustryFeaturesProps {

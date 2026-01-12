@@ -4,7 +4,7 @@ import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { Industry } from "@/constants/industries";
-import { TiltCard } from "@/components/animations";
+import { TiltCard } from "@/components/animations/MagneticButton";
 
 interface IndustryUseCasesProps {
   industry: Industry;

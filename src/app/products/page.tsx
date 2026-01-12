@@ -1,11 +1,27 @@
 import { Footer } from "@/components/layout";
 import products from "@/constants/products";
 import Image from "next/image";
-import { AnimatedSection, StaggerContainer, StaggerItem, TiltCard, ScaleHover } from "@/components/animations";
+import { AnimatedSection, StaggerContainer, StaggerItem } from "@/components/animations/AnimatedSection";
+import { TiltCard, ScaleHover } from "@/components/animations/MagneticButton";
 import { GradientCard } from "@/components/ui/GradientCard";
-import { ArrowUpRight } from "lucide-react";
 
-export const dynamic = 'force-dynamic';
+// Inline ArrowUpRight icon to avoid importing entire lucide-react library (~50KB)
+function ArrowUpRight({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <line x1="7" y1="17" x2="17" y2="7" />
+      <polyline points="7 7 17 7 17 17" />
+    </svg>
+  );
+}
 
 export default function ProductsPage() {
   return (
@@ -13,11 +29,15 @@ export default function ProductsPage() {
       <main className="relative min-h-screen bg-background/95 backdrop-blur-sm text-white flex flex-col items-center py-20 sm:py-[141px] px-4 lg:px-[120px]">
         {/* Background Image with Color Dodge effect */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <img
+          <Image
             src="/products/productsBg.png"
-            alt="decorative background"
-            className="absolute hidden lg:block lg:left-[279px] lg:top-[86px] w-[1259px] h-[841px] opacity-60 animate-pulse"
+            alt=""
+            width={1259}
+            height={841}
+            className="absolute hidden lg:block lg:left-[279px] lg:top-[86px] opacity-60 animate-pulse"
             style={{ mixBlendMode: 'color-dodge' }}
+            priority={false}
+            aria-hidden="true"
           />
         </div>
 

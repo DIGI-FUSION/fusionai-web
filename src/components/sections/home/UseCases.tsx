@@ -1,11 +1,11 @@
 "use client";
 
-import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
-import { useRef, useState } from "react";
+import { motion, useInView } from "framer-motion";
+import { useRef, useState, useCallback } from "react";
 import { GradientCard } from "@/components/ui/GradientCard";
-import { USE_CASES } from "@/constants";
+import { USE_CASES } from "@/constants/useCases";
 
-// Interactive 3D Card with magnetic effect
+// 3D Card with mouse-following tilt effect (optimized)
 function UseCaseCard({
   useCase,
   index,
@@ -20,196 +20,182 @@ function UseCaseCard({
   onLeave: () => void;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
+  const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0 });
 
-  const rotateX = useSpring(useTransform(y, [-100, 100], [15, -15]), { stiffness: 300, damping: 30 });
-  const rotateY = useSpring(useTransform(x, [-100, 100], [-15, 15]), { stiffness: 300, damping: 30 });
+  // Reduced particle count from 8 to 4
+  const particlePositions = [20, 45, 65, 85];
 
-  // Fixed particle positions - no randomness
-  const particlePositions = [15, 25, 40, 55, 70, 85, 30, 60];
-  const particleDelays = [0, 0.1, 0.2, 0.3, 0.4, 0.15, 0.25, 0.35];
-  const particleDurations = [1.5, 1.7, 1.9, 2.1, 2.3, 1.6, 1.8, 2.0];
-
-  function handleMouse(e: React.MouseEvent) {
+  // Optimized mouse move handler with requestAnimationFrame
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    x.set(e.clientX - rect.left - rect.width / 2);
-    y.set(e.clientY - rect.top - rect.height / 2);
-  }
 
-  function handleMouseLeave() {
-    x.set(0);
-    y.set(0);
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    // Calculate tilt (max 15 degrees)
+    const rotateX = ((y - centerY) / centerY) * -15;
+    const rotateY = ((x - centerX) / centerX) * 15;
+
+    setTilt({ rotateX, rotateY });
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setTilt({ rotateX: 0, rotateY: 0 });
     onLeave();
-  }
+  }, [onLeave]);
 
   return (
     <motion.div
       ref={cardRef}
       className="relative cursor-pointer"
       style={{
-        perspective: 1000,
+        perspective: "1000px",
         transformStyle: "preserve-3d",
       }}
-      initial={{ opacity: 0, y: 60, rotateX: -20 }}
-      whileInView={{ 
-        opacity: 1, 
-        y: 0, 
-        rotateX: 0,
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{
+        opacity: 1,
+        y: 0,
       }}
       viewport={{ once: true, amount: 0.3 }}
-      transition={{ 
-        duration: 0.6,
-        delay: index * 0.1,
-        ease: [0.25, 0.4, 0.25, 1] as const,
+      transition={{
+        duration: 0.5,
+        delay: index * 0.08,
+        ease: "easeOut",
       }}
-      onMouseMove={handleMouse}
       onMouseEnter={onHover}
+      onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
-      <motion.div
+      <GradientCard
+        width="100%"
+        height="220px"
+        padding="28px"
+        className={`relative overflow-hidden transition-all duration-200 ${
+          isHovered ? "z-10" : "z-0"
+        }`}
         style={{
-          rotateX,
-          rotateY,
+          transform: isHovered
+            ? `rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg) translateY(-5px)`
+            : "rotateX(0deg) rotateY(0deg) translateY(0px)",
           transformStyle: "preserve-3d",
         }}
       >
-        <GradientCard
-          width="100%"
-          height="220px"
-          padding="28px"
-          className={`relative overflow-hidden transition-all duration-300 ${
-            isHovered ? "z-10" : "z-0"
-          }`}
-        >
-          {/* Animated gradient background on hover */}
-          <motion.div
-            className={`absolute inset-0 bg-gradient-to-br ${useCase.gradient} opacity-0`}
-            animate={{ opacity: isHovered ? 1 : 0 }}
-            transition={{ duration: 0.3 }}
-          />
-          
-          {/* Floating particles on hover */}
-          {isHovered && (
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              {particlePositions.map((position, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute w-1 h-1 rounded-full"
-                  style={{
-                    background: useCase.color,
-                    left: `${position}%`,
-                    bottom: "0%",
-                  }}
-                  animate={{
-                    y: [0, -150],
-                    opacity: [0, 1, 0],
-                    scale: [0, 1.5, 0],
-                  }}
-                  transition={{
-                    duration: particleDurations[i],
-                    repeat: Infinity,
-                    delay: particleDelays[i],
-                  }}
-                />
-              ))}
-            </div>
-          )}
+        {/* Gradient background on hover - CSS transition */}
+        <div
+          className={`absolute inset-0 bg-gradient-to-br ${useCase.gradient} transition-opacity duration-300`}
+          style={{ opacity: isHovered ? 1 : 0 }}
+        />
 
-          {/* Glowing border on hover */}
-          <motion.div
-            className="absolute inset-0 rounded-2xl pointer-events-none"
-            animate={{
-              boxShadow: isHovered 
-                ? `0 0 40px ${useCase.color}40, inset 0 0 30px ${useCase.color}10` 
-                : "none",
-              border: isHovered ? `1px solid ${useCase.color}50` : "1px solid transparent",
-            }}
-            transition={{ duration: 0.3 }}
-          />
-
-          {/* Content */}
-          <div className="relative z-10 h-full flex flex-col">
-            {/* Header with icon and category */}
-            <div className="flex items-center gap-3 mb-4">
-              {/* Animated icon */}
-              <motion.div
-                className="text-3xl"
-                animate={isHovered ? {
-                  scale: [1, 1.2, 1],
-                  rotate: [0, 10, -10, 0],
-                } : {}}
-                transition={{ duration: 0.5 }}
-              >
-                {useCase.icon}
-              </motion.div>
-              
-              {/* Category badge */}
-              <motion.span
-                className="px-3 py-1 rounded-full text-[10px] font-semibold tracking-wider"
+        {/* Particles on hover - CSS animation */}
+        {isHovered && (
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {particlePositions.map((position, i) => (
+              <div
+                key={i}
+                className="absolute w-1 h-1 rounded-full animate-float-particle"
                 style={{
-                  background: `${useCase.color}20`,
-                  color: useCase.color,
-                  border: `1px solid ${useCase.color}30`,
+                  background: useCase.color,
+                  left: `${position}%`,
+                  bottom: "0%",
+                  animationDelay: `${i * 0.2}s`,
+                  opacity: 0,
                 }}
-                animate={isHovered ? { scale: 1.05 } : { scale: 1 }}
-              >
-                {useCase.category}
-              </motion.span>
-            </div>
-
-            {/* Title with underline animation */}
-            <div className="relative mb-3">
-              <motion.h3
-                className="text-xl font-bold text-white"
-                animate={isHovered ? { x: 5 } : { x: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                {useCase.title}
-              </motion.h3>
-              <motion.div
-                className="absolute -bottom-1 left-0 h-0.5 rounded-full"
-                style={{ background: useCase.color }}
-                initial={{ width: 0 }}
-                animate={{ width: isHovered ? "60%" : 0 }}
-                transition={{ duration: 0.3 }}
               />
-            </div>
-
-            {/* Description */}
-            <motion.p
-              className="text-white/70 text-sm leading-relaxed flex-1"
-              animate={isHovered ? { opacity: 1, x: 5 } : { opacity: 0.7, x: 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              {useCase.description}
-            </motion.p>
-
-            {/* Arrow indicator */}
-            <motion.div
-              className="absolute bottom-6 right-6 flex items-center gap-2"
-              initial={{ opacity: 0, x: -10 }}
-              animate={isHovered ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
-              transition={{ duration: 0.2 }}
-            >
-              <span className="text-xs" style={{ color: useCase.color }}>Explore</span>
-              <motion.svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke={useCase.color}
-                strokeWidth="2"
-                animate={isHovered ? { x: [0, 5, 0] } : {}}
-                transition={{ duration: 0.8, repeat: Infinity }}
-              >
-                <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
-              </motion.svg>
-            </motion.div>
+            ))}
           </div>
-        </GradientCard>
-      </motion.div>
+        )}
+
+        {/* Glowing border on hover - CSS transition */}
+        <div
+          className="absolute inset-0 rounded-2xl pointer-events-none transition-all duration-300"
+          style={{
+            boxShadow: isHovered
+              ? `0 0 40px ${useCase.color}40, inset 0 0 30px ${useCase.color}10`
+              : "none",
+            border: isHovered ? `1px solid ${useCase.color}50` : "1px solid transparent",
+          }}
+        />
+
+        {/* Content */}
+        <div className="relative z-10 h-full flex flex-col">
+          {/* Header with icon and category */}
+          <div className="flex items-center gap-3 mb-4">
+            {/* Icon - CSS transition 
+            <div
+              className="text-3xl transition-transform duration-300"
+              style={{ transform: isHovered ? "scale(1.15)" : "scale(1)" }}
+            >
+              {useCase.icon}
+            </div>
+*/}
+            {/* Category badge */}
+            <span
+              className="px-3 py-1 rounded-full text-[10px] font-semibold tracking-wider transition-transform duration-300"
+              style={{
+                background: `${useCase.color}20`,
+                color: useCase.color,
+                border: `1px solid ${useCase.color}30`,
+                transform: isHovered ? "scale(1.05)" : "scale(1)",
+              }}
+            >
+              {useCase.category}
+            </span>
+          </div>
+
+          {/* Title with underline animation */}
+          <div className="relative mb-3">
+            <h3
+              className="text-xl font-bold text-white transition-transform duration-200"
+              style={{ transform: isHovered ? "translateX(5px)" : "translateX(0)" }}
+            >
+              {useCase.title}
+            </h3>
+            <div
+              className="absolute -bottom-1 left-0 h-0.5 rounded-full transition-all duration-300"
+              style={{
+                background: useCase.color,
+                width: isHovered ? "60%" : "0%",
+              }}
+            />
+          </div>
+
+          {/* Description */}
+          <p
+            className="text-white/70 text-sm leading-relaxed flex-1 transition-all duration-200"
+            style={{
+              opacity: isHovered ? 1 : 0.7,
+              transform: isHovered ? "translateX(5px)" : "translateX(0)",
+            }}
+          >
+            {useCase.description}
+          </p>
+
+          {/* Arrow indicator */}
+          <div
+            className="absolute bottom-6 right-6 flex items-center gap-2 transition-all duration-200"
+            style={{
+              opacity: isHovered ? 1 : 0,
+              transform: isHovered ? "translateX(0)" : "translateX(-10px)",
+            }}
+          >
+            <span className="text-xs" style={{ color: useCase.color }}>Explore</span>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke={useCase.color}
+              strokeWidth="2"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+        </div>
+      </GradientCard>
     </motion.div>
   );
 }
@@ -217,127 +203,74 @@ function UseCaseCard({
 export function UseCases() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-
-  // Fixed shape dimensions - no randomness
-  const shapes = Array.from({ length: 6 }, (_, i) => ({
-    width: 25 + (i % 3) * 10,
-    height: 25 + ((i + 1) % 3) * 10,
-    left: `${10 + i * 15}%`,
-    top: `${20 + (i % 3) * 30}%`,
-    borderRadius: i % 2 === 0 ? "50%" : "4px",
-  }));
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"],
-  });
-
-  const backgroundY = useTransform(scrollYProgress, [0, 1], [0, -100]);
-  const headerOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 1]);
+  const isInView = useInView(containerRef, { once: true, amount: 0.2 });
 
   return (
-    <section 
+    <section
       ref={containerRef}
       className="relative py-24 px-6 bg-background/95 backdrop-blur-sm overflow-hidden"
     >
-      {/* Animated background elements */}
+      {/* Static background - CSS animation */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {/* Moving gradient orbs */}
-        <motion.div
-          className="absolute w-[600px] h-[600px] rounded-full"
+        {/* Gradient orbs - CSS animation */}
+        <div
+          className="absolute w-[600px] h-[600px] rounded-full animate-scale-pulse"
           style={{
             background: "radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%)",
             left: "-10%",
             top: "20%",
-            y: backgroundY,
           }}
-          animate={{
-            scale: [1, 1.2, 1],
-            x: [0, 50, 0],
-          }}
-          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
         />
-        <motion.div
-          className="absolute w-[500px] h-[500px] rounded-full"
+        <div
+          className="absolute w-[500px] h-[500px] rounded-full animate-scale-pulse"
           style={{
             background: "radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%)",
             right: "-5%",
             bottom: "10%",
+            animationDelay: "3s",
           }}
-          animate={{
-            scale: [1, 1.3, 1],
-            x: [0, -30, 0],
-          }}
-          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
         />
 
-        {/* Floating geometric shapes */}
-        {shapes.map((shape, i) => (
-          <motion.div
+        {/* Static geometric shapes - reduced from 6 to 3, CSS animation */}
+        {[0, 1, 2].map((i) => (
+          <div
             key={i}
-            className="absolute"
+            className="absolute animate-float"
             style={{
-              width: shape.width,
-              height: shape.height,
-              left: shape.left,
-              top: shape.top,
+              width: 25 + (i % 3) * 10,
+              height: 25 + ((i + 1) % 3) * 10,
+              left: `${20 + i * 30}%`,
+              top: `${25 + (i % 3) * 25}%`,
               border: "1px solid rgba(255,255,255,0.1)",
-              borderRadius: shape.borderRadius,
-            }}
-            animate={{
-              y: [0, -30, 0],
-              rotate: [0, 180, 360],
-              opacity: [0.1, 0.3, 0.1],
-            }}
-            transition={{
-              duration: 8 + i * 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: i * 0.5,
+              borderRadius: i % 2 === 0 ? "50%" : "4px",
+              animationDelay: `${i * 1.5}s`,
+              opacity: 0.2,
             }}
           />
         ))}
       </div>
 
       <div className="max-w-6xl mx-auto relative z-10">
-        {/* Header with parallax */}
-        <motion.div 
+        {/* Header */}
+        <motion.div
           className="text-center mb-16"
-          style={{ opacity: headerOpacity }}
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
         >
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            
-          </motion.div>
-          
-          <motion.h2
-            className="text-5xl font-bold text-white mb-4"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
+          <h2 className="text-5xl font-bold text-white mb-4">
             Use Cases
-          </motion.h2>
-          
-          <motion.p
-            className="text-white/60 text-lg max-w-2xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
+          </h2>
+
+          <p className="text-white/60 text-lg max-w-2xl mx-auto">
             Real flows for real teams — from support to marketing.
             <br />
             <span className="text-white/40">Discover how Fusion AI transforms industries.</span>
-          </motion.p>
+          </p>
         </motion.div>
 
-        {/* Cards Grid - Bento style layout */}
+        {/* Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Row 1: 3 cards */}
           {USE_CASES.slice(0, 3).map((useCase, index) => (
@@ -350,7 +283,7 @@ export function UseCases() {
               onLeave={() => setHoveredIndex(null)}
             />
           ))}
-          
+
           {/* Row 2: 2 wider cards */}
           <div className="lg:col-span-2">
             <UseCaseCard
@@ -368,7 +301,7 @@ export function UseCases() {
             onHover={() => setHoveredIndex(4)}
             onLeave={() => setHoveredIndex(null)}
           />
-          
+
           {/* Row 3: 3 cards */}
           {USE_CASES.slice(5, 8).map((useCase, index) => (
             <UseCaseCard
@@ -381,7 +314,6 @@ export function UseCases() {
             />
           ))}
         </div>
-
       </div>
     </section>
   );

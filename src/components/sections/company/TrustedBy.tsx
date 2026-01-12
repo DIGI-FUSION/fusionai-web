@@ -2,17 +2,17 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { AnimatedSection } from "@/components/animations";
+import { AnimatedSection } from "@/components/animations/AnimatedSection";
 
 const TRUSTED_PARTNERS = [
-  { name: "Attijariwafa Bank", logo: "/aba/trustedby/atijari.svg" },
-  { name: "Autosur", logo: "/aba/trustedby/autosur.svg" },
-  { name: "Aptiv", logo: "/aba/trustedby/aptiv.svg" },
-  { name: "Zurich", logo: "/aba/trustedby/zurich.svg" },
-  { name: "Amana", logo: "/aba/trustedby/amana.svg" },
-  { name: "MSPS", logo: "/aba/trustedby/msps.svg" },
-  { name: "ANP", logo: "/aba/trustedby/anp.svg" },
-  { name: "Poste", logo: "/aba/trustedby/psote.svg" },
+  { name: "Attijariwafa Bank", logo: "/aba/trustedby/atijari.webp" },
+  { name: "Autosur", logo: "/aba/trustedby/autosur.webp" },
+  { name: "Aptiv", logo: "/aba/trustedby/aptiv.webp" },
+  { name: "Zurich", logo: "/aba/trustedby/zurich.webp" },
+  { name: "Amana", logo: "/aba/trustedby/amana.webp" },
+  { name: "MSPS", logo: "/aba/trustedby/msps.webp" },
+  { name: "ANP", logo: "/aba/trustedby/anp.webp" },
+  { name: "Poste", logo: "/aba/trustedby/psote.webp" },
 ];
 
 // Double the array for infinite scroll effect

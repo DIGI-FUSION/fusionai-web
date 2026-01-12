@@ -2,12 +2,12 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { AnimatedSection } from "@/components/animations";
-import { DOUBLED_CLIENTS } from "@/constants";
+import { AnimatedSection } from "@/components/animations/AnimatedSection";
+import { DOUBLED_CLIENTS } from "@/constants/clients";
 
 export function Clients() {
   return (
-    <section className="relative py-16 md:py-20 px-6 bg-background/95 backdrop-blur-sm -mt-48 overflow-hidden">
+    <section className="relative py-16 md:py-20 px-6 bg-background -mt-48 overflow-hidden">
       <div className="max-w-6xl mx-auto">
         {/* Heading with animation */}
         <AnimatedSection delay={0.2}>

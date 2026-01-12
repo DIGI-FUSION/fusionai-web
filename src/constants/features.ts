@@ -2,17 +2,17 @@ export const FEATURES = [
   {
     title: "Smart Infrastructure",
     description: "Hybrid Edge/Cloud deployment. Scalable, secure, and optimized for performance.",
-    icon: "/features/brain.svg",
+    icon: "/features/brain2.webp",
   },
   {
     title: "Device Integration",
     description: "Connect and control IoT devices, cameras, and sensors with ease.",
-    icon: "/features/pc.svg",
+    icon: "/features/pc.webp",
   },
   {
     title: "AI Lifecycle",
     description: "From data collection to model training and deployment — it's all covered.",
-    icon: "/features/brainAI.svg",
+    icon: "/features/brainAI.webp",
   },
 ];
 

@@ -1,8 +1,8 @@
 import { Footer } from "@/components/layout";
-import { CTA } from "@/components/sections/home";
-import { CompanyHero, TrustedBy, ABAGalaxies } from "@/components/sections/company";
-
-export const dynamic = "force-dynamic";
+import { CTA } from "@/components/sections/home/CTA";
+import { CompanyHero } from "@/components/sections/company/CompanyHero";
+import { TrustedBy } from "@/components/sections/company/TrustedBy";
+import { ABAGalaxies } from "@/components/sections/company/ABAGalaxies";
 
 export default function CompanyPage() {
   return (

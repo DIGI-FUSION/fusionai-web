@@ -1,8 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { AnimatedSection, StaggerContainer, StaggerItem } from "@/components/animations";
-import { FOOTER_LINKS, SOCIAL_ICONS } from "@/constants";
+import { AnimatedSection, StaggerContainer, StaggerItem } from "@/components/animations/AnimatedSection";
+import { FOOTER_LINKS, SOCIAL_ICONS } from "@/constants/social";
 
 export function Footer() {
   return (

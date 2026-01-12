@@ -46,9 +46,14 @@ export function GradientCard({
   const hasCustomHeight = style.height || style.minHeight;
   const hasHeightClass = className.includes('h-') || className.includes('min-h-');
 
+  // Extract height-related classes for the outer wrapper
+  const heightClasses = className.split(' ').filter(c => c.startsWith('h-') || c.startsWith('min-h-')).join(' ');
+  const widthClasses = className.split(' ').filter(c => c.startsWith('w-')).join(' ');
+  const otherClasses = className.split(' ').filter(c => !c.startsWith('w-') && !c.startsWith('h-') && !c.startsWith('min-h-')).join(' ');
+
   return (
     <div
-      className={`relative ${className.includes('w-') ? className.split(' ').filter(c => c.startsWith('w-')).join(' ') : ''}`}
+      className={`relative ${widthClasses} ${heightClasses}`}
       style={{
         borderRadius: "24px",
         background: "linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(10, 15, 30, 0.98) 50%, rgba(5, 15, 35, 0.95) 100%)",
@@ -58,7 +63,7 @@ export function GradientCard({
       }}
     >
       <div
-        className={`relative flex flex-col items-center rounded-[23px] ${className.split(' ').filter(c => !c.startsWith('w-')).join(' ')}`}
+        className={`relative flex flex-col items-center rounded-[23px] h-full ${otherClasses}`}
         style={{
           ...(height && !hasCustomHeight && !hasHeightClass ? { height } : {}),
           padding,

@@ -3,8 +3,9 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { GradientCard } from "@/components/ui/GradientCard";
-import { AnimatedSection, StaggerContainer, StaggerItem, TiltCard } from "@/components/animations";
-import { PATHS } from "@/constants";
+import { AnimatedSection, StaggerContainer, StaggerItem } from "@/components/animations/AnimatedSection";
+import { TiltCard } from "@/components/animations/MagneticButton";
+import { PATHS } from "@/constants/paths";
 
 export function ChoosePath() {
   return (

@@ -2,27 +2,39 @@
 
 import { Button } from "@/components/ui/Button";
 import { GetStartedButton } from "@/components/ui/GetStartedButton";
-import { useEffect, useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { ParticleField, GlowOrb } from "@/components/animations";
+import { useRef, useEffect } from "react";
+import { motion, useInView } from "framer-motion";
 
 export function Hero() {
-  const videoRef = useRef<HTMLVideoElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  });
-  
-  // Parallax effects
-  const y = useTransform(scrollYProgress, [0, 1], [0, 200]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.9]);
+  const unicornRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(containerRef, { once: false, amount: 0.3 });
 
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.play().catch(() => {});
+    // @ts-expect-error - UnicornStudio is loaded from external script
+    if (!window.UnicornStudio) {
+      // @ts-expect-error - UnicornStudio is loaded from external script
+      window.UnicornStudio = { isInitialized: false };
+      const script = document.createElement("script");
+      script.src = "https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.0.1/dist/unicornStudio.umd.js";
+      script.onload = () => {
+        // @ts-expect-error - UnicornStudio is loaded from external script
+        if (!window.UnicornStudio.isInitialized) {
+          // @ts-expect-error - UnicornStudio is loaded from external script
+          UnicornStudio.init();
+          // @ts-expect-error - UnicornStudio is loaded from external script
+          window.UnicornStudio.isInitialized = true;
+        }
+      };
+      (document.head || document.body).appendChild(script);
+    } else {
+      // @ts-expect-error - UnicornStudio is loaded from external script
+      if (!window.UnicornStudio.isInitialized) {
+        // @ts-expect-error - UnicornStudio is loaded from external script
+        UnicornStudio.init();
+        // @ts-expect-error - UnicornStudio is loaded from external script
+        window.UnicornStudio.isInitialized = true;
+      }
     }
   }, []);
 
@@ -32,133 +44,118 @@ export function Hero() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.3,
+        staggerChildren: 0.08,
+        delayChildren: 0.2,
       },
     },
   };
 
   const wordVariants = {
-    hidden: { 
-      opacity: 0, 
-      y: 60,
-      rotateX: -60,
+    hidden: {
+      opacity: 0,
+      y: 40,
     },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
-      rotateX: 0,
       transition: {
-        duration: 0.8,
-        ease: [0.25, 0.4, 0.25, 1] as const,
+        duration: 0.6,
+        ease: "easeOut" as const,
       },
     },
   };
 
   const fadeUpVariants = {
-    hidden: { opacity: 0, y: 30 },
+    hidden: { opacity: 0, y: 20 },
     visible: (delay: number) => ({
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.6,
+        duration: 0.5,
         delay,
-        ease: [0.25, 0.4, 0.25, 1] as const,
+        ease: "easeOut" as const,
       },
     }),
   };
 
   return (
-    <section 
+    <section
       ref={containerRef}
       className="relative min-h-screen flex items-center justify-center overflow-hidden -mt-24"
     >
-      {/* Video background with parallax */}
-      <motion.div className="absolute inset-0 z-0" style={{ y }}>
-        <video
-          ref={videoRef}
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-        >
-          <source src="/home_title_bg.mp4" type="video/mp4" />
-        </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-background" />
-      </motion.div>
+      {/* Unicorn Studio 3D Background */}
+      <div className="absolute inset-0 z-0">
+        <div
+          ref={unicornRef}
+          data-us-project="a0oaUSHNZqtDfeVeK1vr"
+          className="absolute inset-0 w-full h-full"
+          style={{ width: "100%", height: "100%" }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/10 to-background/80" />
+      </div>
 
-      {/* Animated particles - responsive count */}
-      <ParticleField count={20} className="z-[1]" />
-      
-      {/* Animated glow orbs - responsive sizes */}
-      <GlowOrb
-        className="top-1/4 left-1/4"
-        size={300}
-        color="rgba(69, 135, 244, 0.2)"
-        duration={10}
+      {/* Static glow orbs - CSS animation instead of Framer */}
+      <div
+        className="absolute top-1/4 left-1/4 w-[300px] h-[300px] rounded-full pointer-events-none animate-scale-pulse z-[1]"
+        style={{
+          background: "radial-gradient(circle, rgba(69, 135, 244, 0.2) 0%, transparent 70%)",
+          filter: "blur(60px)",
+        }}
       />
-      <GlowOrb
-        className="bottom-1/4 right-1/4"
-        size={250}
-        color="rgba(147, 51, 234, 0.15)"
-        duration={12}
-        delay={2}
+      <div
+        className="absolute bottom-1/4 right-1/4 w-[250px] h-[250px] rounded-full pointer-events-none animate-scale-pulse z-[1]"
+        style={{
+          background: "radial-gradient(circle, rgba(147, 51, 234, 0.15) 0%, transparent 70%)",
+          filter: "blur(60px)",
+          animationDelay: "2s",
+        }}
       />
 
-      {/* Content with scale and opacity on scroll */}
-      <motion.div
-        className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center"
-        style={{ opacity, scale }}
-      >
+      {/* Content */}
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center">
         {/* Animated title with word-by-word reveal */}
-        <motion.h1
+        {/* <motion.h1
           className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight sm:whitespace-nowrap"
           variants={titleVariants}
           initial="hidden"
           animate="visible"
-          style={{ perspective: 1000 }}
         >
-          <motion.span 
+          <motion.span
             variants={wordVariants}
             className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-white/90"
-            style={{ transformStyle: "preserve-3d" }}
           >
             Fuse
           </motion.span>
           {" "}
-          <motion.span 
+          <motion.span
             variants={wordVariants}
             className="inline-block font-light text-white/90"
-            style={{ transformStyle: "preserve-3d" }}
           >
             Anything
           </motion.span>
           {" "}
-          <motion.span 
+          <motion.span
             variants={wordVariants}
             className="inline-block font-light text-white/60"
-            style={{ transformStyle: "preserve-3d" }}
           >
             —
           </motion.span>
           {" "}
-          <motion.span 
+          <motion.span
             variants={wordVariants}
             className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-white"
-            style={{ transformStyle: "preserve-3d" }}
           >
             No Code Needed
           </motion.span>
-        </motion.h1>
+        </motion.h1> */}
 
         {/* Subtitle with fade up */}
         <motion.p
-          className="text-base sm:text-xl md:text-2xl text-white/80 mb-8 sm:mb-12 max-w-3xl mx-auto font-light px-2"
+          className="text-base sm:text-xl md:text-2xl text-white/80 mb-8 sm:mb-12 max-w-3xl mx-auto font-light px-2 mt-6 sm:mt-30"
           variants={fadeUpVariants}
           initial="hidden"
           animate="visible"
-          custom={0.8}
+          custom={0.6}
         >
           Build powerful workflows visually in minutes
         </motion.p>
@@ -166,14 +163,14 @@ export function Hero() {
         {/* Buttons with stagger */}
         <motion.div
           className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4"
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 1.1 }}
+          transition={{ duration: 0.5, delay: 0.8 }}
         >
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
-            transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            transition={{ type: "spring", stiffness: 400, damping: 20 }}
             className="w-full sm:w-auto"
           >
             <GetStartedButton size="lg" className="text-sm sm:text-base w-full sm:w-auto" />
@@ -182,7 +179,7 @@ export function Hero() {
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
-            transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            transition={{ type: "spring", stiffness: 400, damping: 20 }}
             className="w-full sm:w-auto"
           >
             <Button variant="glass" size="lg" className="px-6 sm:px-8 text-sm sm:text-base gap-2 sm:gap-3 w-full sm:w-auto">
@@ -199,31 +196,21 @@ export function Hero() {
           </motion.div>
         </motion.div>
 
-        {/* Scroll indicator - hidden on mobile */}
+        {/* Scroll indicator - CSS animation */}
         <motion.div
           className="absolute -bottom-20 left-1/2 -translate-x-1/2 hidden sm:flex"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.5, duration: 0.6 }}
+          transition={{ delay: 1.2, duration: 0.5 }}
         >
-          <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="flex flex-col items-center gap-2"
-          >
+          <div className="flex flex-col items-center gap-2">
             <span className="text-white/40 text-sm tracking-widest uppercase">Scroll</span>
-            <motion.div
-              className="w-6 h-10 border-2 border-white/20 rounded-full flex justify-center pt-2"
-            >
-              <motion.div
-                animate={{ y: [0, 12, 0], opacity: [1, 0.3, 1] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                className="w-1.5 h-1.5 bg-white/60 rounded-full"
-              />
-            </motion.div>
-          </motion.div>
+            <div className="w-6 h-10 border-2 border-white/20 rounded-full flex justify-center pt-2">
+              <div className="w-1.5 h-1.5 bg-white/60 rounded-full animate-bounce" />
+            </div>
+          </div>
         </motion.div>
-      </motion.div>
+      </div>
 
       {/* Bottom fade */}
       <div className="absolute bottom-0 left-0 right-0 h-0 bg-gradient-to-t from-background to-transparent z-[5]" />

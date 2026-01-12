@@ -3,7 +3,8 @@
 import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { AnimatedSection } from "@/components/animations";
+import { AnimatedSection } from "@/components/animations/AnimatedSection";
+import { GradientCard } from "@/components/ui/GradientCard";
 
 interface GalaxyCard {
   title: string;
@@ -57,57 +58,59 @@ function GalaxyCardComponent({ galaxy, index }: { galaxy: GalaxyCard; index: num
   return (
     <motion.div
       ref={cardRef}
-      className="relative rounded-[20px] p-6 overflow-hidden"
-      style={{
-        background: "linear-gradient(180deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%)",
-        border: "1px solid rgba(255, 255, 255, 0.1)",
-        backdropFilter: "blur(10px)",
-      }}
+      className="h-full"
       initial={{ opacity: 0, y: 40 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: index * 0.1 }}
+      whileHover={{
+        y: -10,
+        scale: 1.02,
+        transition: { type: "spring", stiffness: 300, damping: 20 }
+      }}
     >
-      {/* Card title */}
-      <h3
-        className="text-base font-medium text-white/80 mb-5"
-        style={{
-          fontFamily: "'Be Vietnam Pro', sans-serif",
-          letterSpacing: "0.02em",
-        }}
-      >
-        {galaxy.title}
-      </h3>
+      <GradientCard className="w-full h-full min-h-[280px]" padding="24px" gap="16px">
+        {/* Card title */}
+        <h3
+          className="text-base font-medium text-white/80 self-start"
+          style={{
+            fontFamily: "'Be Vietnam Pro', sans-serif",
+            letterSpacing: "0.02em",
+          }}
+        >
+          {galaxy.title}
+        </h3>
 
-      {/* Company logos */}
-      <div className="flex flex-col gap-3">
-        {galaxy.companies.map((company, companyIndex) => (
-          <motion.div
-            key={company.name}
-            className="flex items-center justify-center rounded-[12px] py-4 px-5"
-            style={{
-              background: "linear-gradient(135deg, rgba(66, 133, 244, 0.2) 0%, rgba(66, 133, 244, 0.08) 100%)",
-              border: "1px solid rgba(66, 133, 244, 0.25)",
-            }}
-            initial={{ opacity: 0, x: -20 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.4, delay: index * 0.1 + companyIndex * 0.1 + 0.3 }}
-            whileHover={{
-              scale: 1.02,
-              borderColor: "rgba(66, 133, 244, 0.5)",
-              background: "linear-gradient(135deg, rgba(66, 133, 244, 0.25) 0%, rgba(66, 133, 244, 0.12) 100%)",
-            }}
-          >
-            <Image
-              src={company.logo}
-              alt={company.name}
-              width={160}
-              height={45}
-              className="object-contain"
-              style={{ height: "auto", maxHeight: "45px" }}
-            />
-          </motion.div>
-        ))}
-      </div>
+        {/* Company logos */}
+        <div className="flex flex-col gap-3 w-full">
+          {galaxy.companies.map((company, companyIndex) => (
+            <motion.div
+              key={company.name}
+              className="flex items-center justify-center rounded-[12px] py-4 px-5"
+              style={{
+                background: "linear-gradient(135deg, rgba(66, 133, 244, 0.2) 0%, rgba(66, 133, 244, 0.08) 100%)",
+                border: "1px solid rgba(66, 133, 244, 0.25)",
+              }}
+              initial={{ opacity: 0, x: -20 }}
+              animate={isInView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.4, delay: index * 0.1 + companyIndex * 0.1 + 0.3 }}
+              whileHover={{
+                scale: 1.02,
+                borderColor: "rgba(66, 133, 244, 0.5)",
+                background: "linear-gradient(135deg, rgba(66, 133, 244, 0.25) 0%, rgba(66, 133, 244, 0.12) 100%)",
+              }}
+            >
+              <Image
+                src={company.logo}
+                alt={company.name}
+                width={160}
+                height={45}
+                className="object-contain"
+                style={{ height: "auto", maxHeight: "45px" }}
+              />
+            </motion.div>
+          ))}
+        </div>
+      </GradientCard>
     </motion.div>
   );
 }
@@ -119,10 +122,7 @@ export function ABAGalaxies() {
   return (
     <section
       ref={sectionRef}
-      className="relative py-20 md:py-32 px-6 overflow-hidden"
-      style={{
-        background: "#13161B",
-      }}
+      className="relative py-20 md:py-32 px-6 overflow-hidden bg-background"
     >
       {/* Background glow effects */}
       <div className="absolute inset-0 pointer-events-none">
@@ -172,27 +172,15 @@ export function ABAGalaxies() {
           </div>
         </AnimatedSection>
 
-        {/* Galaxy cards grid - 3 columns for first row, 2 columns for second row */}
+        {/* Galaxy cards grid */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr"
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ duration: 0.5 }}
         >
-          {GALAXIES.slice(0, 3).map((galaxy, index) => (
+          {GALAXIES.map((galaxy, index) => (
             <GalaxyCardComponent key={galaxy.title} galaxy={galaxy} index={index} />
-          ))}
-        </motion.div>
-
-        {/* Second row - 2 cards centered */}
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 max-w-[800px] mx-auto lg:max-w-none lg:grid-cols-2 lg:px-[200px]"
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.5, delay: 0.3 }}
-        >
-          {GALAXIES.slice(3).map((galaxy, index) => (
-            <GalaxyCardComponent key={galaxy.title} galaxy={galaxy} index={index + 3} />
           ))}
         </motion.div>
       </div>

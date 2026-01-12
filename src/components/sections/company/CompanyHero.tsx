@@ -42,7 +42,7 @@ export function CompanyHero() {
         style={{ y }}
       >
         <Image
-          src="/aba/herobg.png"
+          src="/aba/herobg.webp"
           alt="ABA Technology Background"
           fill
           className="object-cover"

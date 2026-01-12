@@ -1,10 +1,10 @@
 "use client";
 
-import { motion, useInView, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { GetStartedButton } from "@/components/ui/GetStartedButton";
 
-// Fixed particle positions to avoid hydration mismatch
+// Reduced from 15 to 6 particles for performance
 const PARTICLES = [
   { id: 0, x: 10, y: 20, size: 3 },
   { id: 1, x: 85, y: 15, size: 4 },
@@ -12,61 +12,15 @@ const PARTICLES = [
   { id: 3, x: 75, y: 80, size: 5 },
   { id: 4, x: 50, y: 30, size: 3 },
   { id: 5, x: 15, y: 55, size: 4 },
-  { id: 6, x: 90, y: 45, size: 2 },
-  { id: 7, x: 35, y: 85, size: 3 },
-  { id: 8, x: 60, y: 10, size: 4 },
-  { id: 9, x: 80, y: 60, size: 2 },
-  { id: 10, x: 5, y: 40, size: 3 },
-  { id: 11, x: 45, y: 75, size: 5 },
-  { id: 12, x: 70, y: 25, size: 2 },
-  { id: 13, x: 20, y: 90, size: 4 },
-  { id: 14, x: 55, y: 50, size: 3 },
 ];
 
 export function CTA() {
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.4 });
-  
-  // Mouse position tracking
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  
-  // Smooth spring physics for mouse following
-  const springConfig = { damping: 25, stiffness: 150 };
-  const smoothMouseX = useSpring(mouseX, springConfig);
-  const smoothMouseY = useSpring(mouseY, springConfig);
-  
-  // Transform mouse position to parallax offsets
-  const orbX1 = useTransform(smoothMouseX, [-300, 300], [40, -40]);
-  const orbY1 = useTransform(smoothMouseY, [-200, 200], [30, -30]);
-  const orbX2 = useTransform(smoothMouseX, [-300, 300], [-50, 50]);
-  const orbY2 = useTransform(smoothMouseY, [-200, 200], [-40, 40]);
-  const gradientX = useTransform(smoothMouseX, [-300, 300], [30, 70]);
-  const gradientY = useTransform(smoothMouseY, [-200, 200], [30, 70]);
-  
-  // Grid distortion
-  const gridRotateX = useTransform(smoothMouseY, [-200, 200], [5, -5]);
-  const gridRotateY = useTransform(smoothMouseX, [-300, 300], [-5, 5]);
-  
-  // Particle movement transforms
-  const particleX1 = useTransform(smoothMouseX, [-300, 300], [-20, 20]);
-  const particleX2 = useTransform(smoothMouseX, [-300, 300], [20, -20]);
-  const particleY1 = useTransform(smoothMouseY, [-200, 200], [-15, 15]);
-  const particleY2 = useTransform(smoothMouseY, [-200, 200], [15, -15]);
-  
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!sectionRef.current) return;
-    const rect = sectionRef.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    mouseX.set(e.clientX - centerX);
-    mouseY.set(e.clientY - centerY);
-  };
 
   return (
     <section
       ref={sectionRef}
-      onMouseMove={handleMouseMove}
       className="bg-background/95 backdrop-blur-sm overflow-hidden py-8 sm:py-16 px-4 sm:px-6"
       style={{
         display: "flex",
@@ -77,9 +31,9 @@ export function CTA() {
       }}
     >
       <motion.div
-        initial={{ opacity: 0, y: 60, scale: 0.95 }}
-        animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-        transition={{ duration: 0.8, ease: [0.25, 0.4, 0.25, 1] }}
+        initial={{ opacity: 0, y: 40 }}
+        animate={isInView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.6, ease: "easeOut" }}
         className="w-full max-w-[1200px] rounded-[20px] sm:rounded-[30px] p-12 sm:p-[89px_40px]"
         style={{
           backdropFilter: "blur(3.65px)",
@@ -94,41 +48,30 @@ export function CTA() {
           overflow: "hidden",
         }}
       >
-        {/* Mouse-responsive gradient spotlight */}
-        <motion.div
+        {/* Static gradient spotlight - no mouse tracking */}
+        <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: useTransform(
-              [gradientX, gradientY],
-              ([x, y]) => `radial-gradient(circle at ${x}% ${y}%, rgba(55, 93, 251, 0.15) 0%, transparent 50%)`
-            ),
+            background: "radial-gradient(circle at 50% 50%, rgba(55, 93, 251, 0.15) 0%, transparent 50%)",
           }}
         />
-        
-        {/* Animated grid background */}
-        <motion.div
+
+        {/* Static grid background - no animation */}
+        <div
           className="absolute inset-0 pointer-events-none opacity-20"
           style={{
-            rotateX: gridRotateX,
-            rotateY: gridRotateY,
-            perspective: 1000,
+            backgroundImage: `
+              linear-gradient(rgba(55, 93, 251, 0.3) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(55, 93, 251, 0.3) 1px, transparent 1px)
+            `,
+            backgroundSize: "40px 40px",
           }}
-        >
-          <div
-            className="w-full h-full"
-            style={{
-              backgroundImage: `
-                linear-gradient(rgba(55, 93, 251, 0.3) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(55, 93, 251, 0.3) 1px, transparent 1px)
-              `,
-              backgroundSize: "40px 40px",
-            }}
-          />
-        </motion.div>
+        />
 
-        {/* Animated border */}
-        <motion.div
+        {/* Animated border - CSS animation */}
+        <div
           aria-hidden="true"
+          className="animate-border-glow"
           style={{
             position: "absolute",
             border: "1px solid #043d88",
@@ -136,113 +79,65 @@ export function CTA() {
             pointerEvents: "none",
             borderRadius: "30px",
           }}
-          animate={{
-            borderColor: ["#043d88", "#4587F4", "#043d88"],
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
         />
 
-        {/* Mouse-responsive glow orb 1 (Pink) - responsive size */}
-        <motion.div
-          className="absolute pointer-events-none w-32 h-32 sm:w-[180px] sm:h-[180px]"
+        {/* Glow orbs - CSS animation instead of Framer */}
+        <div
+          className="absolute pointer-events-none w-32 h-32 sm:w-[180px] sm:h-[180px] animate-scale-pulse"
           style={{
             right: "10%",
             top: "10%",
-            x: orbX1,
-            y: orbY1,
             borderRadius: "50%",
             background: "radial-gradient(circle, rgba(240, 135, 255, 0.4) 0%, transparent 70%)",
             filter: "blur(40px)",
           }}
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.6, 0.8, 0.6],
-          }}
-          transition={{
-            duration: 6,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
         />
 
-        {/* Mouse-responsive glow orb 2 (Blue) - responsive size */}
-        <motion.div
-          className="absolute pointer-events-none w-32 h-32 sm:w-[180px] sm:h-[180px]"
+        <div
+          className="absolute pointer-events-none w-32 h-32 sm:w-[180px] sm:h-[180px] animate-scale-pulse"
           style={{
             left: "10%",
             top: "15%",
-            x: orbX2,
-            y: orbY2,
             borderRadius: "50%",
             background: "radial-gradient(circle, rgba(51, 177, 255, 0.4) 0%, transparent 70%)",
             filter: "blur(40px)",
-          }}
-          animate={{
-            scale: [1, 1.15, 1],
-            opacity: [0.6, 0.9, 0.6],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1,
+            animationDelay: "3s",
           }}
         />
-        
-        {/* Floating particles that respond to mouse */}
-        {PARTICLES.map((particle) => (
-          <motion.div
+
+        {/* Particles - CSS animation, reduced count */}
+        {isInView && PARTICLES.map((particle) => (
+          <div
             key={particle.id}
-            className="absolute rounded-full pointer-events-none"
+            className="absolute rounded-full pointer-events-none animate-float-particle"
             style={{
               left: `${particle.x}%`,
               top: `${particle.y}%`,
               width: particle.size,
               height: particle.size,
-              background: particle.id % 2 === 0 
-                ? "rgba(240, 135, 255, 0.6)" 
+              background: particle.id % 2 === 0
+                ? "rgba(240, 135, 255, 0.6)"
                 : "rgba(51, 177, 255, 0.6)",
-              x: particle.id % 2 === 0 ? particleX1 : particleX2,
-              y: particle.id % 3 === 0 ? particleY1 : particleY2,
-            }}
-            animate={{
-              y: [0, -30, 0],
-              opacity: [0.3, 0.8, 0.3],
-            }}
-            transition={{
-              duration: 3 + (particle.id % 3),
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: particle.id * 0.2,
+              animationDelay: `${particle.id * 0.4}s`,
+              opacity: 0,
             }}
           />
         ))}
-        
-        {/* Scanning line effect */}
-        <motion.div
-          className="absolute left-0 right-0 h-[1px] pointer-events-none"
+
+        {/* Scanning line - CSS animation */}
+        <div
+          className="absolute left-0 right-0 h-[1px] pointer-events-none animate-scan-line"
           style={{
             background: "linear-gradient(90deg, transparent, rgba(55, 93, 251, 0.5), transparent)",
-          }}
-          animate={{
-            top: ["0%", "100%", "0%"],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: "linear",
+            top: 0,
           }}
         />
 
-        {/* Text Section with animation */}
+        {/* Text Section */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
           className="text-center px-4"
           style={{
             display: "flex",
@@ -256,7 +151,7 @@ export function CTA() {
             zIndex: 10,
           }}
         >
-          <motion.h2
+          <h2
             className="text-2xl sm:text-3xl md:text-[48px]"
             style={{
               lineHeight: "1.2",
@@ -264,17 +159,9 @@ export function CTA() {
               letterSpacing: "0.68px",
               margin: 0,
             }}
-            animate={{
-              backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-            }}
-            transition={{
-              duration: 5,
-              repeat: Infinity,
-              ease: "linear",
-            }}
           >
             Ready to Automate Your Work?
-          </motion.h2>
+          </h2>
           <p
             className="text-base sm:text-lg md:text-[20px]"
             style={{
@@ -287,11 +174,11 @@ export function CTA() {
           </p>
         </motion.div>
 
-        {/* Buttons Section with stagger */}
+        {/* Buttons Section */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.5 }}
+          transition={{ duration: 0.5, delay: 0.35 }}
           className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto px-4"
           style={{
             alignItems: "center",
@@ -302,7 +189,7 @@ export function CTA() {
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
-            transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            transition={{ type: "spring", stiffness: 400, damping: 20 }}
             className="w-full sm:w-auto"
           >
             <GetStartedButton size="md" className="w-full sm:w-auto" />
@@ -312,7 +199,7 @@ export function CTA() {
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
-            transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            transition={{ type: "spring", stiffness: 400, damping: 20 }}
             className="w-full sm:w-auto"
             style={{
               position: "relative",

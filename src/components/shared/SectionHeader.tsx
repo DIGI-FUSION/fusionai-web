@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { AnimatedSection } from "@/components/animations";
+import { AnimatedSection } from "@/components/animations/AnimatedSection";
 
 interface SectionHeaderProps {
   title: string;
