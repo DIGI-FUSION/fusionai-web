@@ -2,6 +2,8 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { INDUSTRIES } from "@/constants/industries";
 import { GradientCard } from "@/components/ui/GradientCard";
 import { USE_CASES } from "@/constants/useCases";
 
@@ -12,12 +14,14 @@ function UseCaseCard({
   isHovered,
   onHover,
   onLeave,
+  onExplore,
 }: {
   useCase: typeof USE_CASES[0];
   index: number;
   isHovered: boolean;
   onHover: () => void;
   onLeave: () => void;
+  onExplore: () => void;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0 });
@@ -69,6 +73,12 @@ function UseCaseCard({
       onMouseEnter={onHover}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      onClick={onExplore}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e: React.KeyboardEvent) => {
+        if (e.key === "Enter" || e.key === " ") onExplore();
+      }}
     >
       <GradientCard
         width="100%"
@@ -175,12 +185,14 @@ function UseCaseCard({
           </p>
 
           {/* Arrow indicator */}
-          <div
+          <button
+            onClick={onExplore}
             className="absolute bottom-6 right-6 flex items-center gap-2 transition-all duration-200"
             style={{
               opacity: isHovered ? 1 : 0,
               transform: isHovered ? "translateX(0)" : "translateX(-10px)",
             }}
+            aria-label={`Explore ${useCase.title}`}
           >
             <span className="text-xs" style={{ color: useCase.color }}>Explore</span>
             <svg
@@ -193,7 +205,7 @@ function UseCaseCard({
             >
               <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-          </div>
+          </button>
         </div>
       </GradientCard>
     </motion.div>
@@ -204,6 +216,33 @@ export function UseCases() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const isInView = useInView(containerRef, { once: true, amount: 0.2 });
+  const router = useRouter();
+
+  const navigateToIndustry = (title: string) => {
+    const normalized = title.toLowerCase().trim();
+
+    const slugFromTitle = normalized
+      .replace(/&/g, "-")
+      .replace(/[^a-z0-9-\s]/g, "")
+      .replace(/\s+/g, "-");
+
+    const industry = INDUSTRIES.find((ind) => {
+      const name = ind.name.toLowerCase();
+      const slug = ind.slug.toLowerCase();
+
+      // direct name match
+      if (name === normalized) return true;
+      // partial matches (e.g., "defense" in "defense & security")
+      if (name.includes(normalized) || normalized.includes(name)) return true;
+      // slug match or slug contains title-derived slug
+      if (slug === slugFromTitle || slug.includes(slugFromTitle) || slugFromTitle.includes(slug)) return true;
+
+      return false;
+    });
+
+    if (industry) router.push(`/industries/${industry.slug}`);
+    else router.push(`/industries`);
+  };
 
   return (
     <section
@@ -281,6 +320,7 @@ export function UseCases() {
               isHovered={hoveredIndex === index}
               onHover={() => setHoveredIndex(index)}
               onLeave={() => setHoveredIndex(null)}
+              onExplore={() => navigateToIndustry(useCase.title)}
             />
           ))}
 
@@ -292,6 +332,7 @@ export function UseCases() {
               isHovered={hoveredIndex === 3}
               onHover={() => setHoveredIndex(3)}
               onLeave={() => setHoveredIndex(null)}
+              onExplore={() => navigateToIndustry(USE_CASES[3].title)}
             />
           </div>
           <UseCaseCard
@@ -300,6 +341,7 @@ export function UseCases() {
             isHovered={hoveredIndex === 4}
             onHover={() => setHoveredIndex(4)}
             onLeave={() => setHoveredIndex(null)}
+            onExplore={() => navigateToIndustry(USE_CASES[4].title)}
           />
 
           {/* Row 3: 3 cards */}
@@ -311,6 +353,7 @@ export function UseCases() {
               isHovered={hoveredIndex === index + 5}
               onHover={() => setHoveredIndex(index + 5)}
               onLeave={() => setHoveredIndex(null)}
+              onExplore={() => navigateToIndustry(useCase.title)}
             />
           ))}
         </div>

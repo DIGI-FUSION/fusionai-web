@@ -26,7 +26,7 @@ function ArrowUpRight({ className }: { className?: string }) {
 export default function ProductsPage() {
   return (
     <>
-      <main className="relative min-h-screen bg-background/95 backdrop-blur-sm text-white flex flex-col items-center py-20 sm:py-[141px] px-4 lg:px-[120px]">
+      <main className="relative min-h-screen bg-background/95 backdrop-blur-sm text-white flex flex-col items-center pt-12 pb-20 sm:pt-[40px] sm:pb-[141px] px-4 lg:px-[120px]">
         {/* Background Image with Color Dodge effect */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <Image
@@ -41,7 +41,7 @@ export default function ProductsPage() {
           />
         </div>
 
-        <AnimatedSection className="w-full max-w-[1200px] flex flex-col items-center gap-8 sm:gap-[44px] relative z-10">
+        <AnimatedSection className="w-full max-w-[1200px] flex flex-col items-center gap-8 sm:gap-[44px] relative z-10 ">
           <h1 className="text-3xl sm:text-[57px] leading-[120%] tracking-[0.05em] font-[400] text-white text-center">
             Products
           </h1>

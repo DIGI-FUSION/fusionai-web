@@ -33,26 +33,36 @@ body {
   position: relative;
   width: 100%;
   height: auto;
-  border-radius: 30px;
+  border-radius: 9999px; /* Fully rounded pill shape */
 
-  /* Glass tint - more transparent to show refraction */
-  background: rgba(0, 0, 0, 0.08);
+  /* Glass tint - stronger black glass appearance */
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.12) 0%,
+    rgba(0, 0, 0, 0.24) 40%,
+    rgba(0, 0, 0, 0.12) 100%
+  );
 
-  /* Frosted glass refraction - stronger for better distortion visibility */
-  backdrop-filter: blur(20px) saturate(1.2);
-  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  /* Frosted glass - moderate blur to show refraction distortion */
+  /* Slightly stronger blur + reduced brightness for darker, thicker glass */
+  backdrop-filter: blur(24px) saturate(1.05) brightness(0.92);
+  -webkit-backdrop-filter: blur(24px) saturate(1.05) brightness(0.92);
 
-  /* Inner shadow (edge refraction) - enhanced for liquid glass effect */
+  /* Enhanced edge shadows for "thick glass" look - removed harsh outer border */
   box-shadow:
-    inset 0 0 24px -2px rgba(145,145,145,0.4),
-    inset 0 2px 4px rgba(255,255,255,0.3),
-    inset 0 -2px 4px rgba(0,0,0,0.3),
-    0 24px 48px rgba(0,0,0,0.35),
-    0 0 0 1px rgba(255,255,255,0.1);
+    /* Top edge highlight - softer */
+    inset 0 1px 1px rgba(255,255,255,0.25),
+    /* Bottom edge shadow */
+    inset 0 -1px 1px rgba(0,0,0,0.2),
+    /* Inner edge refraction glow */
+    inset 0 0 30px -5px rgba(180,180,220,0.25),
+    /* Outer drop shadow */
+    0 20px 50px rgba(0,0,0,0.4);
 
   overflow: hidden;
   isolation: isolate;
 
+  /* Keep container size stable — move dynamic scaling to the specular highlight. */
   transform: scale(var(--gloss-scale, 1));
   transition: transform 0.25s ease-out;
 }
@@ -61,18 +71,27 @@ body {
 .ios-glass::before {
   content: "";
   position: absolute;
-  inset: -20%;
+    /* expand the highlight area to cover more of the bar */
+    inset: -40%;
   pointer-events: none;
+  /* Slightly brighter highlight to improve legibility while keeping dark feel */
   background: radial-gradient(
-    140% 90% at var(--gloss-x, 60%) var(--gloss-y, 30%),
-    rgba(255,255,255,0.5),
-    rgba(255,255,255,0.2) 35%,
-    rgba(150,150,255,0.1) 55%,
-    transparent 75%
+    180% 120% at var(--gloss-x, 60%) var(--gloss-y, 30%),
+    rgba(255,255,255,0.34),
+    rgba(255,255,255,0.14) 30%,
+    rgba(140,140,180,0.08) 55%,
+    transparent 82%
   );
-  opacity: var(--gloss-opacity, 0.25);
+  opacity: calc(var(--gloss-opacity, 0.28) * 1.0);
   mix-blend-mode: overlay;
-  filter: blur(40px);
+  filter: blur(64px);
+  transform-origin: center;
+  /* Amplify the perceived motion without affecting layout: scale + subtle translate + increased blur */
+  --gscale: calc(var(--gloss-scale, 1));
+  transform: scale(calc(1 + (var(--gscale) - 1) * 1.9)) translateY(calc((var(--gscale) - 1) * -18px));
+  filter: blur(calc(64px + (var(--gscale) - 1) * 12px));
+  transition: transform 0.28s cubic-bezier(.22,.9,.28,1), opacity 0.22s linear, filter 0.28s ease-out;
+  will-change: transform, opacity, filter;
 }
 
 /* Glass noise */

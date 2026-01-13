@@ -15,7 +15,7 @@ export function LiquidGlass({
   className = "",
   surfaceType = "squircle",
   refractiveIndex = 1.5, // Glass refractive index
-  maxDisplacement = 20,
+  maxDisplacement = 60,
 }: LiquidGlassProps) {
   const [dimensions, setDimensions] = useState({ width: 1400, height: 80 });
   const [isMounted, setIsMounted] = useState(false);
@@ -58,10 +58,6 @@ export function LiquidGlass({
 
     const imageData = ctx.createImageData(width, height);
     const data = imageData.data;
-
-    const centerX = width / 2;
-    const centerY = height / 2;
-    const maxRadius = Math.sqrt(centerX * centerX + centerY * centerY);
 
     // Surface profile functions (normalized 0-1)
     const surfaceProfile = (t: number): number => {
@@ -136,34 +132,88 @@ export function LiquidGlass({
       maxDy = Math.max(maxDy, Math.abs(dy));
     });
 
-    // Generate displacement map
+    // iOS 26 Liquid Glass - with edge inversion effect on ALL sides
+    // Reduced edge zones and inversion strength for cleaner borders
+    const edgeZoneY = Math.min(height * 0.4, 50); // Vertical edge zone (reduced)
+    const edgeZoneX = Math.min(height * 0.6, 60); // Horizontal edge zone (reduced)
+    const inversionStrength = 60; // Softer inversion to avoid border artifacts
+
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
-        const dx = x - centerX;
-        const dy = y - centerY;
-        const radius = Math.sqrt(dx * dx + dy * dy);
-        const angle = Math.atan2(dy, dx);
+        const distFromTop = y;
+        const distFromBottom = height - y;
+        const distFromLeft = x;
+        const distFromRight = width - x;
 
-        // Normalized distance from center
-        const t = Math.min(radius / maxRadius, 1);
+        let displaceX = 0;
+        let displaceY = 0;
 
-        // Get refraction from pre-calculated data
-        const sampleIndex = Math.floor(t * samples);
-        const refraction = refractionData[sampleIndex] || { dx: 0, dy: 0 };
+        // TOP EDGE - pulls content from ABOVE down into view (inverted)
+        if (distFromTop < edgeZoneY) {
+          const t = distFromTop / edgeZoneY;
+          const strength = Math.pow(1 - t, 1.5);
+          displaceY = -strength * inversionStrength;
+        }
 
-        // Rotate displacement vector by angle
-        const displaceX = refraction.dx * Math.cos(angle) - refraction.dy * Math.sin(angle);
-        const displaceY = refraction.dx * Math.sin(angle) + refraction.dy * Math.cos(angle);
+        // BOTTOM EDGE - pulls content from BELOW up into view (inverted)
+        if (distFromBottom < edgeZoneY) {
+          const t = distFromBottom / edgeZoneY;
+          const strength = Math.pow(1 - t, 1.5);
+          displaceY = strength * inversionStrength;
+        }
+
+        // LEFT EDGE - FULL horizontal inversion (same strength as top/bottom)
+        if (distFromLeft < edgeZoneX) {
+          const t = distFromLeft / edgeZoneX;
+          const strength = Math.pow(1 - t, 1.5);
+          displaceX = -strength * inversionStrength;
+        }
+
+        // RIGHT EDGE - FULL horizontal inversion (same strength as top/bottom)
+        if (distFromRight < edgeZoneX) {
+          const t = distFromRight / edgeZoneX;
+          const strength = Math.pow(1 - t, 1.5);
+          displaceX = strength * inversionStrength;
+        }
+
+        // Corner enhancement - softer for cleaner border appearance
+        const cornerZone = 30;
+        const isNearLeftTop = distFromLeft < cornerZone && distFromTop < cornerZone;
+        const isNearRightTop = distFromRight < cornerZone && distFromTop < cornerZone;
+        const isNearLeftBottom = distFromLeft < cornerZone && distFromBottom < cornerZone;
+        const isNearRightBottom = distFromRight < cornerZone && distFromBottom < cornerZone;
+
+        if (isNearLeftTop || isNearRightTop || isNearLeftBottom || isNearRightBottom) {
+          const cornerX = Math.min(distFromLeft, distFromRight);
+          const cornerY = Math.min(distFromTop, distFromBottom);
+          const cornerDist = Math.sqrt(cornerX * cornerX + cornerY * cornerY);
+          if (cornerDist < cornerZone) {
+            const cornerStrength = Math.pow(1 - cornerDist / cornerZone, 2) * 20; // softer corner pull
+            const dirX = distFromLeft < distFromRight ? -1 : 1;
+            const dirY = distFromTop < distFromBottom ? -1 : 1;
+            displaceX += dirX * cornerStrength;
+            displaceY += dirY * cornerStrength;
+          }
+        }
+
+        // Center zone - stronger lens distortion to create clearer patterned refraction
+        const nx = x / width - 0.5;
+        const ny = y / height - 0.5;
+        const centerFactor = Math.max(0, 1 - (Math.abs(displaceX) + Math.abs(displaceY)) / 48);
+        displaceX += nx * 18 * centerFactor;
+        displaceY += ny * 28 * centerFactor;
 
         // Normalize to 0-255 (128 = no displacement)
-        const normalizedX = Math.floor(128 + (displaceX / (maxDx || 1)) * 127);
-        const normalizedY = Math.floor(128 + (displaceY / (maxDy || 1)) * 127);
+        // Increase scale to amplify the visible displacement across the element
+        const scale = 5.0;
+        const normalizedX = Math.floor(128 + displaceX * scale);
+        const normalizedY = Math.floor(128 + displaceY * scale);
 
         const idx = (y * width + x) * 4;
-        data[idx] = Math.max(0, Math.min(255, normalizedX)); // R = X displacement
-        data[idx + 1] = Math.max(0, Math.min(255, normalizedY)); // G = Y displacement
-        data[idx + 2] = 128; // B = unused
-        data[idx + 3] = 255; // A = full opacity
+        data[idx] = Math.max(0, Math.min(255, normalizedX));
+        data[idx + 1] = Math.max(0, Math.min(255, normalizedY));
+        data[idx + 2] = 128;
+        data[idx + 3] = 255;
       }
     }
 
@@ -172,7 +222,7 @@ export function LiquidGlass({
   }, [dimensions, surfaceType, refractiveIndex]);
 
   return (
-    <div ref={containerRef} className={`relative ${className}`}>
+    <div ref={containerRef} className={`relative ${className}`} style={{ borderRadius: "inherit", overflow: "hidden" }}>
       {/* SVG Filter Definition */}
       <svg
         width="0"
@@ -200,27 +250,84 @@ export function LiquidGlass({
                   result="displacement_map"
                   preserveAspectRatio="none"
                 />
+
+                {/* Chromatic Aberration - separate RGB channels with different displacement */}
+                {/* Red channel - displaced more (longer wavelength refracts less) */}
+                <feDisplacementMap
+                  in="SourceGraphic"
+                  in2="displacement_map"
+                  scale={maxDisplacement * 1.15}
+                  xChannelSelector="R"
+                  yChannelSelector="G"
+                  result="displaced_r"
+                />
+                <feColorMatrix
+                  in="displaced_r"
+                  type="matrix"
+                  values="1 0 0 0 0
+                          0 0 0 0 0
+                          0 0 0 0 0
+                          0 0 0 1 0"
+                  result="red"
+                />
+
+                {/* Green channel - base displacement */}
                 <feDisplacementMap
                   in="SourceGraphic"
                   in2="displacement_map"
                   scale={maxDisplacement}
                   xChannelSelector="R"
                   yChannelSelector="G"
-                  result="displaced"
+                  result="displaced_g"
                 />
-                {/* Add subtle blur for realism */}
-                <feGaussianBlur in="displaced" stdDeviation="0.5" result="blurred" />
+                <feColorMatrix
+                  in="displaced_g"
+                  type="matrix"
+                  values="0 0 0 0 0
+                          0 1 0 0 0
+                          0 0 0 0 0
+                          0 0 0 1 0"
+                  result="green"
+                />
+
+                {/* Blue channel - displaced less (shorter wavelength refracts more) */}
+                <feDisplacementMap
+                  in="SourceGraphic"
+                  in2="displacement_map"
+                  scale={maxDisplacement * 0.85}
+                  xChannelSelector="R"
+                  yChannelSelector="G"
+                  result="displaced_b"
+                />
+                <feColorMatrix
+                  in="displaced_b"
+                  type="matrix"
+                  values="0 0 0 0 0
+                          0 0 0 0 0
+                          0 0 1 0 0
+                          0 0 0 1 0"
+                  result="blue"
+                />
+
+                {/* Combine RGB channels */}
+                <feBlend in="red" in2="green" mode="screen" result="rg" />
+                <feBlend in="rg" in2="blue" mode="screen" result="combined" />
+
+                {/* Subtle blur for smooth glass look */}
+                <feGaussianBlur in="combined" stdDeviation="0.3" result="blurred" />
               </>
             )}
           </filter>
         </defs>
       </svg>
 
-      {/* Content with backdrop filter */}
+      {/* Content with backdrop filter - clipped to match border-radius */}
       <div
         style={{
           backdropFilter: `url(#${filterId})`,
           WebkitBackdropFilter: `url(#${filterId})`,
+          borderRadius: "inherit",
+          overflow: "hidden",
         }}
       >
         {children}

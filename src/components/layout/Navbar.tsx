@@ -84,21 +84,22 @@ export function Navbar() {
   return (
     <>
     <div className="pointer-events-none fixed inset-x-0 top-3 z-50 flex justify-center px-3 sm:top-4 md:top-6">
-      <LiquidGlass
-        className="pointer-events-auto w-full max-w-[1400px]"
-        surfaceType="squircle"
-        refractiveIndex={1.5}
-        maxDisplacement={25}
-      >
-        <nav
-          ref={ref as any}
-          className="ios-glass w-full px-3 sm:px-4"
-          role="navigation"
-          aria-label="Primary"
+      <div className="w-full max-w-[1400px] rounded-full overflow-hidden">
+        <LiquidGlass
+          className="pointer-events-auto w-full"
+          surfaceType="squircle"
+          refractiveIndex={1.5}
+          maxDisplacement={50}
         >
-        <div className="flex h-16 md:h-20 items-center justify-between gap-2 px-2">
+          <nav
+            ref={ref as any}
+            className="ios-glass w-full px-3 sm:px-4"
+            role="navigation"
+            aria-label="Primary"
+          >
+        <div className="flex h-14 md:h-16 items-center justify-between gap-2 px-2">
           <Link href="/" className="flex items-center gap-2 pl-1 pr-1">
-            <div className="relative h-10 md:h-12 w-44 md:w-56 rounded-2xl overflow-hidden">
+            <div className="relative h-8 md:h-10 w-40 md:w-48 rounded-2xl overflow-hidden">
               <Image
                 src="/navbarlogo.svg"
                 alt="AbaFusion"
@@ -161,9 +162,9 @@ export function Navbar() {
             aria-label="Toggle menu"
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
-            className="md:hidden inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/5 p-2 text-white/80 hover:bg-white/10"
+            className="md:hidden inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 p-2 text-white/80 hover:bg-white/10"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5">
               {open ? (
                 <path
                   fillRule="evenodd"
@@ -180,67 +181,70 @@ export function Navbar() {
             </svg>
           </button>
         </div>
-
-        {/* Mobile panel */}
-        {open && (
-          <div className="md:hidden border-t border-white/10 px-4 py-4 bg-[#0a0a12]/95 backdrop-blur-2xl rounded-b-[30px]">
-            <div className="flex flex-col gap-2">
-              {NAV_ITEMS.map((item) =>
-                item.subItems ? (
-                  <div key={item.href}>
-                    <button
-                      type="button"
-                      onClick={() => toggleMobileExpanded(item.label)}
-                      className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-base text-white/85 hover:bg-white/5 hover:text-white"
-                    >
-                      {item.label}
-                      <svg
-                        className={`size-4 transition-transform duration-200 ${mobileExpandedItem === item.label ? "rotate-180" : ""}`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </button>
-                    {mobileExpandedItem === item.label && (
-                      <div className="mt-2 flex flex-col gap-1 rounded-xl bg-[#0a0a12]/95 backdrop-blur-xl border border-white/10 p-3">
-                        {item.subItems.map((subItem) => (
-                          <Link
-                            key={subItem.href}
-                            href={subItem.href}
-                            onClick={() => setOpen(false)}
-                            className="rounded-lg px-3 py-2.5 text-sm text-white/85 hover:bg-white/10 hover:text-white transition-colors"
-                          >
-                            {subItem.label}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setOpen(false)}
-                    className="rounded-lg px-3 py-2 text-base text-white/85 hover:bg-white/5 hover:text-white"
-                  >
-                    {item.label}
-                  </Link>
-                )
-              )}
-              <div className="mt-2 flex items-center gap-2">
-                <Button variant="glass" size="md" className="flex-1">
-                  Login
-                </Button>
-                <GetStartedButton size="md" className="flex-1" />
-              </div>
-            </div>
-          </div>
-        )}
       </nav>
       </LiquidGlass>
     </div>
+    </div>
+
+    {/* Mobile menu panel - rendered outside LiquidGlass */}
+    {open && (
+      <div className="pointer-events-auto fixed inset-x-0 top-[72px] z-[60] flex md:hidden justify-center px-3">
+        <div className="w-full max-w-[400px] rounded-2xl border border-white/10 bg-[#0a0a12]/95 backdrop-blur-2xl shadow-2xl shadow-black/50 overflow-hidden">
+          <div className="flex flex-col p-4 gap-1">
+            {NAV_ITEMS.map((item) =>
+              item.subItems ? (
+                <div key={item.href}>
+                  <button
+                    type="button"
+                    onClick={() => toggleMobileExpanded(item.label)}
+                    className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-[15px] text-white/85 hover:bg-white/5 hover:text-white transition-colors"
+                  >
+                    {item.label}
+                    <svg
+                      className={`size-4 transition-transform duration-200 ${mobileExpandedItem === item.label ? "rotate-180" : ""}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  {mobileExpandedItem === item.label && (
+                    <div className="ml-4 flex flex-col gap-1 border-l border-white/10 pl-4 py-2">
+                      {item.subItems.map((subItem) => (
+                        <Link
+                          key={subItem.href}
+                          href={subItem.href}
+                          onClick={() => setOpen(false)}
+                          className="rounded-lg px-3 py-2 text-sm text-white/70 hover:bg-white/5 hover:text-white transition-colors"
+                        >
+                          {subItem.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setOpen(false)}
+                  className="rounded-xl px-4 py-3 text-[15px] text-white/85 hover:bg-white/5 hover:text-white transition-colors"
+                >
+                  {item.label}
+                </Link>
+              )
+            )}
+            <div className="mt-3 pt-3 border-t border-white/10 flex flex-col gap-2">
+              <Button variant="glass" size="md" className="w-full justify-center">
+                Login
+              </Button>
+              <GetStartedButton size="md" className="w-full justify-center" />
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
 
     {/* Desktop dropdown panel - rendered outside LiquidGlass to avoid clipping */}
     {activeDropdown && dropdownItem && (

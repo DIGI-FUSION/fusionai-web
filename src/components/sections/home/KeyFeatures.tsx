@@ -2,8 +2,18 @@
 
 import Image from "next/image";
 import { GradientCard } from "@/components/ui/GradientCard";
-import { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
+import dynamic from "next/dynamic";
+
+const Spline = dynamic(
+  () => import("@splinetool/react-spline").then((mod) => mod.default),
+  { ssr: false }
+);
+
+const ROTATION_SPEED = 0.002;
+
+
 
 import { KEY_FEATURES } from "@/constants/features";
 
@@ -58,6 +68,9 @@ function FeatureCard({
         />
 
         {/* Icon - centered, no animation */}
+
+
+
         <div className="absolute inset-0 flex items-center justify-center">
           <div
             className="relative"
@@ -109,6 +122,58 @@ function ExpandedContent({ feature, index, isVisible }: { feature: (typeof KEY_F
     top: (i * 37 + 13) % 100,
   }));
 
+  // Spline refs and scroll-driven rotation moved inside the component
+  const objectToAnimate = useRef<any>(null);
+  const lastScroll = useRef<number>(0);
+
+  function onLoad(spline: any) {
+    try {
+      const obj = spline.findObjectByName("DIGIEYE 2");
+      objectToAnimate.current = obj;
+    } catch (e) {
+      objectToAnimate.current = null;
+    }
+  }
+
+  // Local Error Boundary to capture any Spline rendering/parsing errors
+  class SplineErrorBoundary extends React.Component<{ fallback?: React.ReactNode; children?: React.ReactNode }, { hasError: boolean }> {
+    constructor(props: any) {
+      super(props);
+      this.state = { hasError: false };
+    }
+
+    static getDerivedStateFromError() {
+      return { hasError: true };
+    }
+
+    componentDidCatch(error: any, info: any) {
+      // eslint-disable-next-line no-console
+      console.warn("Spline render error:", error, info);
+    }
+
+    render() {
+      if (this.state.hasError) {
+        return this.props.fallback ?? <div className="text-sm text-white/70">3D preview unavailable</div>;
+      }
+      return this.props.children as any;
+    }
+  }
+
+  useEffect(() => {
+    function handleScroll() {
+      const scrollY = window.scrollY || window.pageYOffset;
+      if (Math.abs(scrollY - lastScroll.current) < 2) return;
+      lastScroll.current = scrollY;
+      if (objectToAnimate.current) {
+        objectToAnimate.current.rotation.x = scrollY * ROTATION_SPEED;
+        objectToAnimate.current.rotation.y = scrollY * ROTATION_SPEED;
+      }
+    }
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <motion.div
       key={feature.title}
@@ -139,6 +204,7 @@ function ExpandedContent({ feature, index, isVisible }: { feature: (typeof KEY_F
             }}
           />
           {/* Static icon */}
+          
           <div
             className="absolute inset-1 rounded-full flex items-center justify-center"
             style={{ background: "rgba(0,0,0,0.8)" }}
@@ -218,7 +284,7 @@ function ExpandedContent({ feature, index, isVisible }: { feature: (typeof KEY_F
 
         {/* Right side - Image with CSS float animation */}
         <div
-          className="relative mt-6 sm:mt-0 flex-shrink-0 animate-float"
+          className="relative mt-6 sm:mt-0 flex-shrink-0 animate-float flex items-center justify-center"
           style={{
             width: "clamp(180px, 50vw, 400px)",
             height: "clamp(180px, 50vw, 400px)",
@@ -233,6 +299,32 @@ function ExpandedContent({ feature, index, isVisible }: { feature: (typeof KEY_F
             }}
           />
 
+          {/* <div className="relative w-full flex items-center justify-center">
+            <div className="w-[20rem] h-[20rem] sm:w-[28rem] sm:h-[28rem] md:w-[30rem] md:h-[30rem] relative">
+              <SplineErrorBoundary fallback={<div className="text-sm text-white/70">3D preview unavailable</div>}>
+                <Spline
+                  style={{ width: "100%", height: "100%" }}
+                  onLoad={onLoad}
+                  scene="/scenes/scene.splinecode"
+                  className="absolute inset-0"
+                />
+              </SplineErrorBoundary>
+            </div>
+          </div> */}
+
+
+          {/* <div className="relative w-full h-full max-w-full max-h-full z-10 flex items-center justify-center">
+            <div className="h-full aspect-square border" style={{ maxWidth: 420, maxHeight: 420 }}>
+              <Spline
+                scene="/scenes/scene.splinecode"
+                onLoad={(spline) => {
+                  console.debug("Spline loaded:", spline);
+                }}
+              />
+            </div>
+          </div>  */}
+
+          
           <Image
             src={feature.image}
             alt={feature.title}
@@ -240,6 +332,7 @@ function ExpandedContent({ feature, index, isVisible }: { feature: (typeof KEY_F
             sizes="(max-width: 640px) 180px, (max-width: 768px) 240px, 400px"
             className="object-contain relative z-10"
           />
+         
         </div>
       </GradientCard>
     </motion.div>
