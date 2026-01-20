@@ -1,0 +1,58 @@
+export const USE_CASES = [
+  {
+    category: "INDUSTRY",
+    title: "Mining",
+    description: "Pioneering at the edge of innovation",
+    color: "#4285F4",
+    gradient: "from-blue-500/20 to-cyan-600/20",
+  },
+  {
+    category: "INDUSTRY",
+    title: "Oil & Gas",
+    description: "Automation is the new electricity with Fusion AI",
+    color: "#4285F4",
+    gradient: "from-blue-500/20 to-cyan-600/20",
+  },
+  {
+    category: "LOGISTICS",
+    title: "Supply Chain",
+    description: "Unified, real-time visibility across suppliers",
+    color: "#4285F4",
+    gradient: "from-blue-500/20 to-cyan-600/20",
+  },
+  {
+    category: "HEALTHCARE",
+    title: "Healthcare",
+    description: "Transforming the future of healthcare delivery",
+    color: "#4285F4",
+    gradient: "from-blue-500/20 to-cyan-600/20",
+  },
+  {
+    category: "SECURITY",
+    title: "Defense & Security",
+    description: "Real-time threat intelligence from multiple sources",
+    color: "#4285F4",
+    gradient: "from-blue-500/20 to-cyan-600/20",
+  },
+  {
+    category: "AUTOMOTIVE",
+    title: "Automotive",
+    description: "Data-driven insights for streamlined development",
+    color: "#4285F4",
+    gradient: "from-blue-500/20 to-cyan-600/20",
+  },
+  {
+    category: "EDUCATION",
+    title: "Education",
+    description: "Tailored learning pathways for every student",
+    color: "#4285F4",
+    gradient: "from-blue-500/20 to-cyan-600/20",
+  },
+  {
+    category: "FINANCE",
+    title: "Financial Services",
+    description: "Transform financial operations with AI-driven insights",
+    color: "#4285F4",
+    gradient: "from-blue-500/20 to-cyan-600/20",
+  },
+];
