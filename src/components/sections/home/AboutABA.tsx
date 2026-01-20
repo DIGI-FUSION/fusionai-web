@@ -12,7 +12,7 @@ export function AboutABA() {
   const isInView = useInView(sectionRef, { once: true, amount: 0.3 });
 
   return (
-    <section ref={sectionRef} className="relative min-h-screen py-8 sm:py-12 px-4 sm:px-6 overflow-hidden bg-background/95 backdrop-blur-sm flex items-center">
+    <section ref={sectionRef} className="relative min-h-screen py-8 sm:py-12 px-4 sm:px-6 overflow-hidden bg-background flex items-center">
       <div className="w-full max-w-[1200px] mx-auto">
         {/* Background glow effects - now animated */}
         <div className="absolute inset-0 -z-10 pointer-events-none">

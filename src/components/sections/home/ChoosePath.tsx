@@ -9,7 +9,7 @@ import { PATHS } from "@/constants/paths";
 
 export function ChoosePath() {
   return (
-    <section className="relative py-12 sm:py-24 px-4 sm:px-6 bg-background/95 backdrop-blur-sm overflow-hidden">
+    <section className="relative py-12 sm:py-24 px-4 sm:px-6 bg-background overflow-hidden">
       <div className="max-w-[1200px] mx-auto">
         {/* Header with animation */}
         <AnimatedSection>

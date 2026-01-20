@@ -48,7 +48,6 @@ export const KEY_FEATURES = [
   {
     title: "FUSION MIND",
     description: "FUSION MIND est la couche de gouvernance cognitive de Fusion AI. Elle permet l'audit des modèles et des agents, la supervision de leur comportement, l'évaluation des risques éthiques et la mesure de la dette cognitive liée à l'IA. En assurant transparence, explicabilité et contrôle, ce module garantit une utilisation responsable, conforme et durable de l'intelligence artificielle au sein de l'organisation.",
-
     image: "/keySections/mind.png",
     icon: "/keySections/mind_icon.svg",
     color: "#4285F4",

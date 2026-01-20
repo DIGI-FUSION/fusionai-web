@@ -23,9 +23,12 @@ const beVietnamPro = Be_Vietnam_Pro({
 });
 
 export const metadata: Metadata = {
-  title: "FusionAI — Intelligent Orchestration Platform",
+  title: "ABA Fusion — Intelligent Orchestration Platform",
   description:
-    "High-performance, dark-themed AI platform website with purposeful animations.",
+    "FusionAI is an intelligent orchestration platform that seamlessly integrates AI capabilities into your applications, enhancing productivity and innovation.",
+    icons: {
+      icon: "/abafusion.svg",
+    },
 };
 
 export default function RootLayout({

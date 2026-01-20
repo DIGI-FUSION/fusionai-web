@@ -24,7 +24,7 @@ export function Pricing() {
   }, []);
 
   return (
-    <section ref={containerRef} className="pricing-section relative py-20 px-6 bg-background/95 backdrop-blur-sm overflow-hidden">
+    <section ref={containerRef} className="pricing-section relative py-20 px-6 bg-background overflow-hidden">
       {/* Static background - no animation, CSS only */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {/* Static orbs - CSS animation instead of Framer */}
@@ -74,10 +74,11 @@ export function Pricing() {
       >
         {PRICING_PLANS.map((plan, index) => {
           const isHovered = hoveredIndex === index;
-          const shouldShowButtons = plan.hasButtons || isHovered;
-          const shouldHighlight = plan.highlighted || isHovered;
-          const shouldShowBorder = plan.highlighted || isHovered;
-          const shouldShowBorderMobileAware = shouldShowBorder && !isMobile;
+          // Always show buttons and borders
+          const shouldShowButtons = true;
+          const shouldHighlight = true;
+          const shouldShowBorder = true;
+          const shouldShowBorderMobileAware = !isMobile;
 
           return (
             <motion.div
@@ -406,27 +407,23 @@ export function Pricing() {
                     </span>
                   </div>
 
-                  {/* Buttons Section */}
-                  {shouldShowButtons && (
-                    <motion.div
-                      className="pricing-buttons"
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "flex-start",
-                        padding: "0px",
-                        gap: "14px",
-                        width: "100%",
-                        height: "44px",
-                        flex: "none",
-                        order: 3,
-                        alignSelf: "stretch",
-                        flexGrow: 0,
-                      }}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.2, duration: 0.3 }}
-                    >
+                  {/* Buttons Section - always visible */}
+                  <div
+                    className="pricing-buttons"
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "flex-start",
+                      padding: "0px",
+                      gap: "14px",
+                      width: "100%",
+                      height: "44px",
+                      flex: "none",
+                      order: 3,
+                      alignSelf: "stretch",
+                      flexGrow: 0,
+                    }}
+                  >
                       <GetStartedButton size="md" className="flex-1 pricing-primary-btn" />
 
                       {/* Start on GitHub Button */}
@@ -490,8 +487,7 @@ export function Pricing() {
                           Start on GitHub
                         </span>
                       </motion.button>
-                    </motion.div>
-                  )}
+                    </div>
                 </div>
               </div>
             </motion.div>

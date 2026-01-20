@@ -21,7 +21,7 @@ export function CTA() {
   return (
     <section
       ref={sectionRef}
-      className="bg-background/95 backdrop-blur-sm overflow-hidden py-8 sm:py-16 px-4 sm:px-6"
+      className="bg-background overflow-hidden py-8 sm:py-16 px-4 sm:px-6"
       style={{
         display: "flex",
         flexDirection: "column",
@@ -71,7 +71,7 @@ export function CTA() {
         {/* Animated border - CSS animation */}
         <div
           aria-hidden="true"
-          className="animate-border-glow"
+          className={`animate-border-glow ${!isInView ? 'animation-paused' : ''}`}
           style={{
             position: "absolute",
             border: "1px solid #043d88",
@@ -83,7 +83,7 @@ export function CTA() {
 
         {/* Glow orbs - CSS animation instead of Framer */}
         <div
-          className="absolute pointer-events-none w-32 h-32 sm:w-[180px] sm:h-[180px] animate-scale-pulse"
+          className={`absolute pointer-events-none w-32 h-32 sm:w-[180px] sm:h-[180px] animate-scale-pulse ${!isInView ? 'animation-paused' : ''}`}
           style={{
             right: "10%",
             top: "10%",
@@ -94,7 +94,7 @@ export function CTA() {
         />
 
         <div
-          className="absolute pointer-events-none w-32 h-32 sm:w-[180px] sm:h-[180px] animate-scale-pulse"
+          className={`absolute pointer-events-none w-32 h-32 sm:w-[180px] sm:h-[180px] animate-scale-pulse ${!isInView ? 'animation-paused' : ''}`}
           style={{
             left: "10%",
             top: "15%",
@@ -109,7 +109,7 @@ export function CTA() {
         {isInView && PARTICLES.map((particle) => (
           <div
             key={particle.id}
-            className="absolute rounded-full pointer-events-none animate-float-particle"
+            className={`absolute rounded-full pointer-events-none animate-float-particle ${!isInView ? 'animation-paused' : ''}`}
             style={{
               left: `${particle.x}%`,
               top: `${particle.y}%`,
@@ -126,7 +126,7 @@ export function CTA() {
 
         {/* Scanning line - CSS animation */}
         <div
-          className="absolute left-0 right-0 h-[1px] pointer-events-none animate-scan-line"
+          className={`absolute left-0 right-0 h-[1px] pointer-events-none animate-scan-line ${!isInView ? 'animation-paused' : ''}`}
           style={{
             background: "linear-gradient(90deg, transparent, rgba(55, 93, 251, 0.5), transparent)",
             top: 0,

@@ -149,7 +149,7 @@ export function Integrations() {
   return (
     <section
       ref={containerRef}
-      className="relative py-20 px-6 bg-background/95 backdrop-blur-sm overflow-hidden"
+      className="relative py-20 px-6 bg-background overflow-hidden"
     >
       {/* Static background effect - CSS animation */}
       <div className="absolute inset-0 pointer-events-none">

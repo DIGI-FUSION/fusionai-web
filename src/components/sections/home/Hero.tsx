@@ -2,16 +2,17 @@
 
 import { Button } from "@/components/ui/Button";
 import { GetStartedButton } from "@/components/ui/GetStartedButton";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { motion, useInView } from "framer-motion";
+import { useVisibilityAnimation } from "@/hooks/useVisibilityAnimation";
 
 export function Hero() {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const { ref: visibilityRef, isVisible } = useVisibilityAnimation<HTMLElement>({ threshold: 0.1 });
   const unicornRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(containerRef, { once: false, amount: 0.3 });
+  const [scene, setScene] = useState<{ destroy: () => void; pause?: () => void; resume?: () => void } | null>(null);
 
   useEffect(() => {
-    let scene: { destroy: () => void } | null = null;
+    let currentScene: { destroy: () => void; pause?: () => void; resume?: () => void } | null = null;
 
     const initUnicorn = async () => {
       // Wait for the DOM element to be ready
@@ -39,24 +40,37 @@ export function Hero() {
       // @ts-expect-error - UnicornStudio is loaded from external script
       if (window.UnicornStudio?.addScene) {
         // @ts-expect-error - UnicornStudio is loaded from external script
-        scene = await window.UnicornStudio.addScene({
+        currentScene = await window.UnicornStudio.addScene({
           elementId: unicornRef.current.id,
           fps: 60,
           scale: 1,
           dpi: 1.5,
           filePath: "/scenes/hero-background.json",
         });
+        setScene(currentScene);
       }
     };
 
     initUnicorn();
 
     return () => {
-      if (scene) {
-        scene.destroy();
+      if (currentScene) {
+        currentScene.destroy();
       }
     };
   }, []);
+
+  // Pause/resume Unicorn Studio based on visibility
+  useEffect(() => {
+    if (!scene) return;
+
+    if (isVisible) {
+      scene.resume?.();
+    } else {
+      scene.pause?.();
+    }
+  }, [isVisible, scene]);
+
 
   // Animation variants
   const titleVariants = {
@@ -100,7 +114,7 @@ export function Hero() {
 
   return (
     <section
-      ref={containerRef}
+      ref={visibilityRef}
       className="relative min-h-screen flex items-center justify-center overflow-hidden -mt-24"
     >
       {/* Unicorn Studio 3D Background */}
@@ -116,14 +130,14 @@ export function Hero() {
 
       {/* Static glow orbs - CSS animation instead of Framer */}
       <div
-        className="absolute top-1/4 left-1/4 w-[300px] h-[300px] rounded-full pointer-events-none animate-scale-pulse z-[1]"
+        className={`absolute top-1/4 left-1/4 w-[300px] h-[300px] rounded-full pointer-events-none animate-scale-pulse z-[1] ${!isVisible ? 'animation-paused' : ''}`}
         style={{
           background: "radial-gradient(circle, rgba(69, 135, 244, 0.2) 0%, transparent 70%)",
           filter: "blur(60px)",
         }}
       />
       <div
-        className="absolute bottom-1/4 right-1/4 w-[250px] h-[250px] rounded-full pointer-events-none animate-scale-pulse z-[1]"
+        className={`absolute bottom-1/4 right-1/4 w-[250px] h-[250px] rounded-full pointer-events-none animate-scale-pulse z-[1] ${!isVisible ? 'animation-paused' : ''}`}
         style={{
           background: "radial-gradient(circle, rgba(147, 51, 234, 0.15) 0%, transparent 70%)",
           filter: "blur(60px)",

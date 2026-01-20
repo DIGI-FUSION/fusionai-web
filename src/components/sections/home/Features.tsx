@@ -5,10 +5,16 @@ import { motion } from "framer-motion";
 import { GradientCard } from "@/components/ui/GradientCard";
 import { AnimatedSection, StaggerContainer, StaggerItem } from "@/components/animations/AnimatedSection";
 import { FEATURES } from "@/constants/features";
+import { useVisibilityAnimation } from "@/hooks/useVisibilityAnimation";
 
 export function Features() {
+  const { ref: visibilityRef, isVisible } = useVisibilityAnimation<HTMLElement>({ threshold: 0.1 });
+
   return (
-    <section className="relative py-12 sm:py-20 px-4 sm:px-6 bg-background/95 backdrop-blur-sm overflow-hidden">
+    <section
+      ref={visibilityRef}
+      className="relative py-12 sm:py-20 px-4 sm:px-6 bg-background overflow-hidden"
+    >
       {/* Main container - responsive */}
       <div className="max-w-[1200px] mx-auto flex flex-col items-center gap-6 sm:gap-8 py-8 sm:py-16">
         {/* Header section with animation */}
@@ -57,15 +63,15 @@ export function Features() {
                   }}
                 >
                   <GradientCard className="w-full h-full min-h-[280px] sm:min-h-[305px]">
-                    {/* Icon container with floating animation */}
+                    {/* Icon container with floating animation - paused when not visible */}
                     <motion.div
                       className="relative flex items-center justify-center flex-none w-28 h-28 sm:w-[146px] sm:h-[146px]"
-                      animate={{
+                      animate={isVisible ? {
                         y: [0, -8, 0],
-                      }}
+                      } : { y: 0 }}
                       transition={{
                         duration: 4,
-                        repeat: Infinity,
+                        repeat: isVisible ? Infinity : 0,
                         ease: "easeInOut",
                         delay: index * 0.5,
                       }}

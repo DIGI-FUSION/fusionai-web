@@ -26,15 +26,14 @@ body {
   position: relative;
   width: 100%;
   height: auto;
-  border-radius: 9999px; /* Fully rounded pill shape */
+  border-radius: 9999px;
+  /* Fully rounded pill shape */
 
   /* Glass tint - stronger black glass appearance */
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0.12) 0%,
-    rgba(0, 0, 0, 0.24) 40%,
-    rgba(0, 0, 0, 0.12) 100%
-  );
+  background: linear-gradient(180deg,
+      rgba(0, 0, 0, 0.12) 0%,
+      rgba(0, 0, 0, 0.24) 40%,
+      rgba(0, 0, 0, 0.12) 100%);
 
   /* Frosted glass - moderate blur to show refraction distortion */
   /* Slightly stronger blur + reduced brightness for darker, thicker glass */
@@ -44,13 +43,13 @@ body {
   /* Enhanced edge shadows for "thick glass" look - removed harsh outer border */
   box-shadow:
     /* Top edge highlight - softer */
-    inset 0 1px 1px rgba(255,255,255,0.25),
+    inset 0 1px 1px rgba(255, 255, 255, 0.25),
     /* Bottom edge shadow */
-    inset 0 -1px 1px rgba(0,0,0,0.2),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.2),
     /* Inner edge refraction glow */
-    inset 0 0 30px -5px rgba(180,180,220,0.25),
+    inset 0 0 30px -5px rgba(180, 180, 220, 0.25),
     /* Outer drop shadow */
-    0 20px 50px rgba(0,0,0,0.4);
+    0 20px 50px rgba(0, 0, 0, 0.4);
 
   overflow: hidden;
   isolation: isolate;
@@ -64,17 +63,15 @@ body {
 .ios-glass::before {
   content: "";
   position: absolute;
-    /* expand the highlight area to cover more of the bar */
-    inset: -40%;
+  /* expand the highlight area to cover more of the bar */
+  inset: -40%;
   pointer-events: none;
   /* Slightly brighter highlight to improve legibility while keeping dark feel */
-  background: radial-gradient(
-    180% 120% at var(--gloss-x, 60%) var(--gloss-y, 30%),
-    rgba(255,255,255,0.34),
-    rgba(255,255,255,0.14) 30%,
-    rgba(140,140,180,0.08) 55%,
-    transparent 82%
-  );
+  background: radial-gradient(180% 120% at var(--gloss-x, 60%) var(--gloss-y, 30%),
+      rgba(255, 255, 255, 0.34),
+      rgba(255, 255, 255, 0.14) 30%,
+      rgba(140, 140, 180, 0.08) 55%,
+      transparent 82%);
   opacity: calc(var(--gloss-opacity, 0.28) * 1.0);
   mix-blend-mode: overlay;
   filter: blur(64px);
@@ -83,7 +80,7 @@ body {
   --gscale: calc(var(--gloss-scale, 1));
   transform: scale(calc(1 + (var(--gscale) - 1) * 1.9)) translateY(calc((var(--gscale) - 1) * -18px));
   filter: blur(calc(64px + (var(--gscale) - 1) * 12px));
-  transition: transform 0.28s cubic-bezier(.22,.9,.28,1), opacity 0.22s linear, filter 0.28s ease-out;
+  transition: transform 0.28s cubic-bezier(.22, .9, .28, 1), opacity 0.22s linear, filter 0.28s ease-out;
   will-change: transform, opacity, filter;
 }
 
@@ -94,13 +91,11 @@ body {
   inset: 0;
   pointer-events: none;
   background-image:
-    repeating-radial-gradient(
-      circle at 50% 50%,
-      rgba(255,255,255,0.03) 0,
-      rgba(255,255,255,0.03) 1px,
+    repeating-radial-gradient(circle at 50% 50%,
+      rgba(255, 255, 255, 0.03) 0,
+      rgba(255, 255, 255, 0.03) 1px,
       transparent 1px,
-      transparent 2px
-    );
+      transparent 2px);
   opacity: 0.15;
   mix-blend-mode: overlay;
 }
@@ -120,17 +115,16 @@ body {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: radial-gradient(
-    160px 90px at var(--gloss-x, 70%) 24%,
-    rgba(255, 255, 255, 0.26),
-    rgba(255, 255, 255, 0.08) 42%,
-    transparent 60%
-  );
+  background: radial-gradient(160px 90px at var(--gloss-x, 70%) 24%,
+      rgba(255, 255, 255, 0.26),
+      rgba(255, 255, 255, 0.08) 42%,
+      transparent 60%);
   mix-blend-mode: screen;
   pointer-events: none;
 }
 
 @media (prefers-reduced-transparency: reduce) {
+
   .ios-glass,
   .btn-glass {
     backdrop-filter: none !important;
@@ -176,4 +170,137 @@ body {
     justify-content: center !important;
     padding: 12px 16px !important;
   }
+}
+
+/* Animation pause utility for visibility-based optimization */
+.animation-paused,
+.animation-paused * {
+  animation-play-state: paused !important;
+}
+
+/* CSS Keyframe animations for home page sections */
+@keyframes scale-pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes float-particle {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: translateY(-100px);
+    opacity: 0;
+  }
+}
+
+@keyframes scan-line {
+  0% {
+    top: 0;
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes border-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 10px rgba(4, 61, 136, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 20px rgba(4, 61, 136, 0.6);
+  }
+}
+
+@keyframes pulse-glow {
+
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.animate-scale-pulse {
+  animation: scale-pulse 6s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 8s ease-in-out infinite;
+}
+
+.animate-float-particle {
+  animation: float-particle 3s ease-out infinite;
+}
+
+.animate-scan-line {
+  animation: scan-line 4s linear infinite;
+}
+
+.animate-border-glow {
+  animation: border-glow 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 4s ease-in-out infinite;
+}
+
+/* GPU acceleration utilities */
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* Reduce paint areas for better scroll performance */
+.contain-paint {
+  contain: paint;
+}
+
+.contain-strict {
+  contain: strict;
 }

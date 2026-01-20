@@ -84,9 +84,8 @@ function UseCaseCard({
         width="100%"
         height="220px"
         padding="28px"
-        className={`relative overflow-hidden transition-all duration-200 ${
-          isHovered ? "z-10" : "z-0"
-        }`}
+        className={`relative overflow-hidden transition-all duration-200 ${isHovered ? "z-10" : "z-0"
+          }`}
         style={{
           transform: isHovered
             ? `rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg) translateY(-5px)`
@@ -247,10 +246,10 @@ export function UseCases() {
   return (
     <section
       ref={containerRef}
-      className="relative py-24 px-6 bg-background/95 backdrop-blur-sm overflow-hidden"
+      className="relative py-24 px-6 bg-background overflow-hidden"
     >
-      {/* Static background - CSS animation */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      {/* Static background - CSS animation (paused when not visible) */}
+      <div className={`absolute inset-0 pointer-events-none overflow-hidden ${!isInView ? 'animation-paused' : ''}`}>
         {/* Gradient orbs - CSS animation */}
         <div
           className="absolute w-[600px] h-[600px] rounded-full animate-scale-pulse"

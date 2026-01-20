@@ -1,247 +1,29 @@
 "use client";
 
 import Image from "next/image";
-import { GradientCard } from "@/components/ui/GradientCard";
-import React, { useRef, useState, useEffect } from "react";
-import { motion, useInView, AnimatePresence } from "framer-motion";
-import dynamic from "next/dynamic";
-
-const Spline = dynamic(
-  () => import("@splinetool/react-spline").then((mod) => mod.default),
-  { ssr: false }
-);
-
-const ROTATION_SPEED = 0.002;
-
-
+import React, { useRef, useEffect, memo } from "react";
+import { motion } from "framer-motion";
 
 import { KEY_FEATURES } from "@/constants/features";
 
-// Optimized feature card - removed expensive 3D transforms and infinite animations
-function FeatureCard({
+// Simplified card with PNG only - no Spline
+const FeatureCard = memo(function FeatureCard({
   feature,
-  index,
-  isActive,
-  onClick,
 }: {
   feature: (typeof KEY_FEATURES)[0];
-  index: number;
-  isActive: boolean;
-  onClick: () => void;
 }) {
   return (
-    <motion.div
-      onClick={onClick}
-      className="relative cursor-pointer"
-      initial={{ opacity: 0, y: 30 }}
-      animate={{
-        opacity: 1,
-        y: 0,
-        scale: isActive ? 1 : 0.85,
-      }}
-      transition={{
-        duration: 0.4,
-        delay: index * 0.05,
-        ease: "easeOut",
-      }}
-    >
-      <motion.div
-        className="relative rounded-xl overflow-hidden transition-shadow duration-300"
+    <div className="w-[90vw] max-w-5xl h-[450px] sm:h-[500px] flex-shrink-0">
+      <div
+        className="w-full h-full flex flex-col sm:flex-row items-center relative overflow-hidden rounded-[35px]"
         style={{
-          width: "clamp(60px, 15vw, 100px)",
-          height: "clamp(60px, 15vw, 100px)",
-          background: `linear-gradient(135deg, ${feature.color}20, transparent)`,
-          border: isActive ? `2px solid ${feature.color}` : "2px solid rgba(255,255,255,0.1)",
-          boxShadow: isActive ? `0 0 30px ${feature.color}40` : "none",
-          filter: isActive ? "none" : "brightness(0.6)",
-          willChange: isActive ? "transform" : "auto",
-        }}
-        whileHover={{ scale: isActive ? 1.05 : 0.95 }}
-        transition={{ type: "spring", stiffness: 400, damping: 25 }}
-      >
-        {/* Static gradient background - no animation */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `radial-gradient(circle at 50% 50%, ${feature.color}25, transparent 60%)`,
-          }}
-        />
-
-        {/* Icon - centered, no animation */}
-
-
-
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div
-            className="relative"
-            style={{ width: "clamp(20px, 6vw, 40px)", height: "clamp(20px, 6vw, 40px)" }}
-          >
-            <Image
-              src={feature.icon}
-              alt={feature.title}
-              fill
-              sizes="40px"
-              className="object-contain"
-            />
-          </div>
-        </div>
-
-        {/* Glowing ring effect - CSS animation instead of Framer */}
-        {isActive && (
-          <div
-            className="absolute inset-0 rounded-2xl animate-pulse"
-            style={{
-              border: `2px solid ${feature.color}`,
-              boxShadow: `inset 0 0 20px ${feature.color}40`,
-              opacity: 0.5,
-            }}
-          />
-        )}
-      </motion.div>
-
-      {/* Mini title */}
-      <p
-        className="text-center mt-1 sm:mt-2 text-[8px] sm:text-[10px] font-medium transition-colors duration-300"
-        style={{
-          color: isActive ? feature.color : "rgba(255,255,255,0.5)",
-          maxWidth: "clamp(60px, 15vw, 100px)",
-          opacity: isActive ? 1 : 0.5,
+          background: "linear-gradient(180deg, rgba(21, 19, 23, 0.9) 0%, rgba(25, 22, 28, 0.9) 20%, rgba(7, 32, 50, 0.9) 65%, rgba(0, 36, 59, 0.9) 100%)",
+          padding: "clamp(16px, 4vw, 48px)",
         }}
       >
-        {feature.title.replace("FUSION ", "")}
-      </p>
-    </motion.div>
-  );
-}
-
-// Optimized expanded content - reduced particles from 20 to 8, CSS animations for ring
-function ExpandedContent({ feature, index, isVisible }: { feature: (typeof KEY_FEATURES)[0]; index: number; isVisible: boolean }) {
-  // Reduced particle count from 20 to 8
-  const particles = Array.from({ length: 8 }, (_, i) => ({
-    left: (i * 29 + 17) % 100,
-    top: (i * 37 + 13) % 100,
-  }));
-
-  // Spline refs and scroll-driven rotation moved inside the component
-  const objectToAnimate = useRef<any>(null);
-  const lastScroll = useRef<number>(0);
-
-  function onLoad(spline: any) {
-    try {
-      const obj = spline.findObjectByName("DIGIEYE 2");
-      objectToAnimate.current = obj;
-    } catch (e) {
-      objectToAnimate.current = null;
-    }
-  }
-
-  // Local Error Boundary to capture any Spline rendering/parsing errors
-  class SplineErrorBoundary extends React.Component<{ fallback?: React.ReactNode; children?: React.ReactNode }, { hasError: boolean }> {
-    constructor(props: any) {
-      super(props);
-      this.state = { hasError: false };
-    }
-
-    static getDerivedStateFromError() {
-      return { hasError: true };
-    }
-
-    componentDidCatch(error: any, info: any) {
-      // eslint-disable-next-line no-console
-      console.warn("Spline render error:", error, info);
-    }
-
-    render() {
-      if (this.state.hasError) {
-        return this.props.fallback ?? <div className="text-sm text-white/70">3D preview unavailable</div>;
-      }
-      return this.props.children as any;
-    }
-  }
-
-  useEffect(() => {
-    function handleScroll() {
-      const scrollY = window.scrollY || window.pageYOffset;
-      if (Math.abs(scrollY - lastScroll.current) < 2) return;
-      lastScroll.current = scrollY;
-      if (objectToAnimate.current) {
-        objectToAnimate.current.rotation.x = scrollY * ROTATION_SPEED;
-        objectToAnimate.current.rotation.y = scrollY * ROTATION_SPEED;
-      }
-    }
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  return (
-    <motion.div
-      key={feature.title}
-      initial={{ opacity: 0, x: 30 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -30 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
-      className="w-full h-full flex items-center justify-center"
-    >
-      <GradientCard
-        variant="gradient-bg"
-        width="100%"
-        height="auto"
-        padding="clamp(16px, 4vw, 48px)"
-        className="w-full max-w-5xl flex flex-col sm:flex-row items-center relative overflow-hidden min-h-[400px] sm:min-h-[360px] mx-auto"
-      >
-        {/* Rotating ring with CSS animation - much more performant than Framer */}
-        <div
-          className="absolute top-4 left-4 sm:top-6 sm:left-6 z-20"
-          style={{ width: "clamp(36px, 8vw, 60px)", height: "clamp(36px, 8vw, 60px)" }}
-        >
-          {/* CSS animated ring - GPU accelerated */}
-          <div
-            className="absolute inset-0 rounded-full animate-spin-slow"
-            style={{
-              background: `conic-gradient(from 0deg, ${feature.color}, transparent, ${feature.color})`,
-              filter: "blur(3px)",
-            }}
-          />
-          {/* Static icon */}
-          
-          <div
-            className="absolute inset-1 rounded-full flex items-center justify-center"
-            style={{ background: "rgba(0,0,0,0.8)" }}
-          >
-            <Image
-              src={feature.icon}
-              alt={feature.title}
-              width={24}
-              height={24}
-              className="object-contain w-4 h-4 sm:w-6 sm:h-6"
-            />
-          </div>
-        </div>
-
-        {/* Optimized particles - only render when visible, reduced count, CSS animation */}
-        {isVisible && (
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {particles.map((particle, i) => (
-              <div
-                key={i}
-                className="absolute w-1 h-1 rounded-full animate-float-particle"
-                style={{
-                  background: feature.color,
-                  left: `${particle.left}%`,
-                  top: `${particle.top}%`,
-                  animationDelay: `${i * 0.3}s`,
-                  opacity: 0,
-                }}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Left side - Text content */}
-        <div className="flex flex-col items-start justify-center flex-1 sm:pr-6 md:pr-8 relative z-10 pt-12 sm:pt-16 w-full">
-          {/* Title */}
-          <motion.h3
+        {/* Text content */}
+        <div className="flex flex-col items-start justify-center flex-1 sm:pr-6 md:pr-8 relative z-10 pt-4 sm:pt-0 w-full sm:w-1/2 order-2 sm:order-1 h-full">
+          <h3
             className="font-bold mb-3 sm:mb-4"
             style={{
               background: `linear-gradient(135deg, ${feature.color}, #fff)`,
@@ -249,189 +31,136 @@ function ExpandedContent({ feature, index, isVisible }: { feature: (typeof KEY_F
               WebkitTextFillColor: "transparent",
               fontSize: "clamp(18px, 5vw, 36px)",
             }}
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15, duration: 0.3 }}
           >
             {feature.title}
-          </motion.h3>
-
-          {/* Description */}
-          <motion.p
-            className="text-sm sm:text-base text-white/80 leading-relaxed max-w-xl"
-            style={{ textAlign: "left" }}
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.3 }}
-          >
+          </h3>
+          <p className="text-sm sm:text-base text-white/80 leading-relaxed max-w-xl">
             {feature.description}
-          </motion.p>
+          </p>
+        </div>
 
-          {/* Progress indicator - simplified, no layoutId animation */}
-          <div className="mt-6 sm:mt-8 flex items-center gap-2">
-            {KEY_FEATURES.map((_, i) => (
-              <div
-                key={i}
-                className="h-1 rounded-full transition-all duration-300"
-                style={{
-                  width: i === index ? "40px" : "8px",
-                  background: i === index ? feature.color : "rgba(255,255,255,0.2)",
-                }}
+        {/* Image */}
+        <div className="flex-1 w-full sm:w-1/2 relative flex items-center justify-center min-h-0 order-1 sm:order-2 h-[200px] sm:h-full">
+          {/* Glow */}
+          <div
+            className="absolute inset-0 rounded-full opacity-30"
+            style={{
+              background: `radial-gradient(circle, ${feature.color} 0%, transparent 70%)`,
+            }}
+          />
+
+          <div className="relative w-3/4 h-3/4 z-10">
+            <Image
+              src={feature.image}
+              alt={feature.title}
+              fill
+              className="object-contain"
+              sizes="(max-width: 640px) 70vw, 35vw"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+export function KeyFeatures() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  // Optimized scroll animation - pure transform, no state updates
+  useEffect(() => {
+    const container = containerRef.current;
+    const track = trackRef.current;
+    if (!container || !track) return;
+
+    let rafId = 0;
+    let lastProgress = -1;
+
+    const updatePosition = () => {
+      const rect = container.getBoundingClientRect();
+      const containerHeight = container.offsetHeight;
+      const viewportHeight = window.innerHeight;
+
+      const scrollStart = -rect.top;
+      const scrollRange = containerHeight - viewportHeight;
+      const progress = Math.max(0, Math.min(1, scrollStart / scrollRange));
+
+      if (Math.abs(progress - lastProgress) > 0.001) {
+        lastProgress = progress;
+        const translateX = 5 - (progress * 95);
+        track.style.transform = `translate3d(${translateX}%, 0, 0)`;
+      }
+
+      rafId = 0;
+    };
+
+    const onScroll = () => {
+      if (!rafId) {
+        rafId = requestAnimationFrame(updatePosition);
+      }
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    updatePosition();
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, []);
+
+  return (
+    <div ref={containerRef} className="relative bg-background" style={{ height: "400vh" }}>
+      <section className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden pt-20">
+
+        {/* Header */}
+        <motion.div
+          className="text-center mb-4 sm:mb-8 px-4 sm:px-6 flex-shrink-0 absolute top-8 sm:top-12 left-0 right-0 z-20 pointer-events-none"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-medium text-white mb-2 drop-shadow-lg">
+            Key Features
+          </h2>
+          <p className="text-white/80 text-sm sm:text-base md:text-lg drop-shadow-md">
+            Tools to automate, connect, and simplify your work.
+          </p>
+        </motion.div>
+
+        {/* Horizontal Track */}
+        <div className="w-full h-full flex items-center">
+          <div
+            ref={trackRef}
+            className="flex gap-4 sm:gap-8 px-[10vw] sm:px-[20vw] items-center"
+            style={{
+              transform: 'translate3d(5%, 0, 0)',
+              willChange: 'transform',
+            }}
+          >
+            {KEY_FEATURES.map((feature) => (
+              <FeatureCard
+                key={feature.title}
+                feature={feature}
               />
             ))}
           </div>
         </div>
 
-        {/* Right side - Image with CSS float animation */}
+        {/* Background Grid */}
         <div
-          className="relative mt-6 sm:mt-0 flex-shrink-0 animate-float flex items-center justify-center"
+          className="absolute inset-0 pointer-events-none opacity-50 -z-10"
           style={{
-            width: "clamp(180px, 50vw, 400px)",
-            height: "clamp(180px, 50vw, 400px)",
+            backgroundImage: `
+              linear-gradient(rgba(69, 135, 244, 0.03) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(69, 135, 244, 0.03) 1px, transparent 1px)
+            `,
+            backgroundSize: "50px 50px",
           }}
-        >
-          {/* Static glowing backdrop - no animation */}
-          <div
-            className="absolute inset-0 rounded-full"
-            style={{
-              background: `radial-gradient(circle, ${feature.color}30, transparent 70%)`,
-              filter: "blur(40px)",
-            }}
-          />
-
-          {/* <div className="relative w-full flex items-center justify-center">
-            <div className="w-[20rem] h-[20rem] sm:w-[28rem] sm:h-[28rem] md:w-[30rem] md:h-[30rem] relative">
-              <SplineErrorBoundary fallback={<div className="text-sm text-white/70">3D preview unavailable</div>}>
-                <Spline
-                  style={{ width: "100%", height: "100%" }}
-                  onLoad={onLoad}
-                  scene="/scenes/scene.splinecode"
-                  className="absolute inset-0"
-                />
-              </SplineErrorBoundary>
-            </div>
-          </div> */}
-
-
-          {/* <div className="relative w-full h-full max-w-full max-h-full z-10 flex items-center justify-center">
-            <div className="h-full aspect-square border" style={{ maxWidth: 420, maxHeight: 420 }}>
-              <Spline
-                scene="/scenes/scene.splinecode"
-                onLoad={(spline) => {
-                  console.debug("Spline loaded:", spline);
-                }}
-              />
-            </div>
-          </div>  */}
-
-          
-          <Image
-            src={feature.image}
-            alt={feature.title}
-            fill
-            sizes="(max-width: 640px) 180px, (max-width: 768px) 240px, 400px"
-            className="object-contain relative z-10"
-          />
-         
-        </div>
-      </GradientCard>
-    </motion.div>
-  );
-}
-
-export function KeyFeatures() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(containerRef, { once: false, amount: 0.2 });
-
-  // Pause state: timestamp (ms) until which auto-rotate should be paused
-  const [pausedUntil, setPausedUntil] = useState<number | null>(null);
-  const lastRotateRef = useRef<number>(Date.now());
-
-  // Auto-rotate through features - only when in view and not paused
-  useEffect(() => {
-    if (!isInView) return;
-
-    const tick = setInterval(() => {
-      const now = Date.now();
-      // if paused, do nothing
-      if (pausedUntil && now < pausedUntil) return;
-
-      // rotate every 5000ms since last rotation
-      if (now - lastRotateRef.current >= 5000) {
-        setActiveIndex((prev) => (prev + 1) % KEY_FEATURES.length);
-        lastRotateRef.current = now;
-      }
-    }, 500);
-
-    return () => clearInterval(tick);
-  }, [isInView, pausedUntil]);
-
-  function handleFeatureClick(idx: number) {
-    setActiveIndex(idx);
-    // pause auto-rotate for 40 seconds
-    const until = Date.now() + 40000;
-    setPausedUntil(until);
-    lastRotateRef.current = Date.now();
-  }
-
-  return (
-    <section ref={containerRef} className="relative py-12 sm:py-24 bg-background/95 backdrop-blur-sm overflow-hidden">
-      {/* Static background grid - no animation */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-50"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(69, 135, 244, 0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(69, 135, 244, 0.03) 1px, transparent 1px)
-          `,
-          backgroundSize: "50px 50px",
-        }}
-      />
-
-      {/* Header - simplified, no scroll-based animation */}
-      <motion.div
-        className="text-center mb-6 sm:mb-8 px-4 sm:px-6"
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-      >
-        <h2 className="text-2xl sm:text-3xl md:text-5xl font-medium text-white mb-2">
-          Key Features
-        </h2>
-        <p className="text-white/60 text-sm sm:text-base md:text-lg">
-          Tools to automate, connect, and simplify your work.
-        </p>
-      </motion.div>
-
-      {/* Features Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        {/* Feature cards */}
-        <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-          {KEY_FEATURES.map((feature, idx) => (
-            <FeatureCard
-              key={feature.title}
-              feature={feature}
-              index={idx}
-              isActive={idx === activeIndex}
-              onClick={() => handleFeatureClick(idx)}
-            />
-          ))}
-        </div>
-
-        {/* Expanded content */}
-        <div className="mt-2 sm:mt-4">
-          <AnimatePresence mode="wait">
-            <ExpandedContent
-              key={activeIndex}
-              feature={KEY_FEATURES[activeIndex]}
-              index={activeIndex}
-              isVisible={isInView}
-            />
-          </AnimatePresence>
-        </div>
-      </div>
-    </section>
+        />
+      </section>
+    </div>
   );
 }
