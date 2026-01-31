@@ -1,166 +1,211 @@
 "use client";
 
 import Image from "next/image";
-import React, { useRef, useEffect, memo } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { KEY_FEATURES } from "@/constants/features";
 
-// Simplified card with PNG only - no Spline
-const FeatureCard = memo(function FeatureCard({
-  feature,
-}: {
-  feature: (typeof KEY_FEATURES)[0];
-}) {
-  return (
-    <div className="w-[90vw] max-w-5xl h-[450px] sm:h-[500px] flex-shrink-0">
-      <div
-        className="w-full h-full flex flex-col sm:flex-row items-center relative overflow-hidden rounded-[35px]"
-        style={{
-          background: "linear-gradient(180deg, rgba(21, 19, 23, 0.9) 0%, rgba(25, 22, 28, 0.9) 20%, rgba(7, 32, 50, 0.9) 65%, rgba(0, 36, 59, 0.9) 100%)",
-          padding: "clamp(16px, 4vw, 48px)",
-        }}
-      >
-        {/* Text content */}
-        <div className="flex flex-col items-start justify-center flex-1 sm:pr-6 md:pr-8 relative z-10 pt-4 sm:pt-0 w-full sm:w-1/2 order-2 sm:order-1 h-full">
-          <h3
-            className="font-bold mb-3 sm:mb-4"
-            style={{
-              background: `linear-gradient(135deg, ${feature.color}, #fff)`,
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              fontSize: "clamp(18px, 5vw, 36px)",
-            }}
-          >
-            {feature.title}
-          </h3>
-          <p className="text-sm sm:text-base text-white/80 leading-relaxed max-w-xl">
-            {feature.description}
-          </p>
-        </div>
+const AUTO_ADVANCE_INTERVAL = 5000; // 5 seconds
 
-        {/* Image */}
-        <div className="flex-1 w-full sm:w-1/2 relative flex items-center justify-center min-h-0 order-1 sm:order-2 h-[200px] sm:h-full">
-          {/* Glow */}
-          <div
-            className="absolute inset-0 rounded-full opacity-30"
-            style={{
-              background: `radial-gradient(circle, ${feature.color} 0%, transparent 70%)`,
-            }}
-          />
-
-          <div className="relative w-3/4 h-3/4 z-10">
-            <Image
-              src={feature.image}
-              alt={feature.title}
-              fill
-              className="object-contain"
-              sizes="(max-width: 640px) 70vw, 35vw"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-});
+// Short labels for navigation
+const NAV_LABELS = [
+  "DATA PLATFORM",
+  "AUTOMATION",
+  "AGENTIC",
+  "FORGE",
+  "MIND",
+  "ORBITE",
+  "MATE",
+  "QUICK IT",
+  "PROCESSUS",
+];
 
 export function KeyFeatures() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
 
-  // Optimized scroll animation - pure transform, no state updates
+  // Auto-advance timer
   useEffect(() => {
-    const container = containerRef.current;
-    const track = trackRef.current;
-    if (!container || !track) return;
+    if (isPaused) return;
 
-    let rafId = 0;
-    let lastProgress = -1;
+    const timer = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % KEY_FEATURES.length);
+    }, AUTO_ADVANCE_INTERVAL);
 
-    const updatePosition = () => {
-      const rect = container.getBoundingClientRect();
-      const containerHeight = container.offsetHeight;
-      const viewportHeight = window.innerHeight;
+    return () => clearInterval(timer);
+  }, [isPaused, activeIndex]);
 
-      const scrollStart = -rect.top;
-      const scrollRange = containerHeight - viewportHeight;
-      const progress = Math.max(0, Math.min(1, scrollStart / scrollRange));
-
-      if (Math.abs(progress - lastProgress) > 0.001) {
-        lastProgress = progress;
-        const translateX = 5 - (progress * 95);
-        track.style.transform = `translate3d(${translateX}%, 0, 0)`;
-      }
-
-      rafId = 0;
-    };
-
-    const onScroll = () => {
-      if (!rafId) {
-        rafId = requestAnimationFrame(updatePosition);
-      }
-    };
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    updatePosition();
-
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      if (rafId) cancelAnimationFrame(rafId);
-    };
+  const handleIconClick = useCallback((index: number) => {
+    setActiveIndex(index);
+    setIsPaused(true);
+    setTimeout(() => setIsPaused(false), AUTO_ADVANCE_INTERVAL);
   }, []);
 
-  return (
-    <div ref={containerRef} className="relative bg-background" style={{ height: "400vh" }}>
-      <section className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden pt-20">
+  const activeFeature = KEY_FEATURES[activeIndex];
 
+  return (
+    <section className="relative py-16 sm:py-24 bg-background overflow-hidden">
+      {/* Background Grid */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-50 -z-10"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(69, 135, 244, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(69, 135, 244, 0.03) 1px, transparent 1px)
+          `,
+          backgroundSize: "50px 50px",
+        }}
+      />
+
+      <div className="container mx-auto px-4 sm:px-6">
         {/* Header */}
         <motion.div
-          className="text-center mb-4 sm:mb-8 px-4 sm:px-6 flex-shrink-0 absolute top-8 sm:top-12 left-0 right-0 z-20 pointer-events-none"
+          className="text-center mb-8 sm:mb-12"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="text-2xl sm:text-3xl md:text-5xl font-medium text-white mb-2 drop-shadow-lg">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-medium text-white mb-2">
             Key Features
           </h2>
-          <p className="text-white/80 text-sm sm:text-base md:text-lg drop-shadow-md">
+          <p className="text-white/60 text-sm sm:text-base md:text-lg">
             Tools to automate, connect, and simplify your work.
           </p>
         </motion.div>
 
-        {/* Horizontal Track */}
-        <div className="w-full h-full flex items-center">
-          <div
-            ref={trackRef}
-            className="flex gap-4 sm:gap-8 px-[10vw] sm:px-[20vw] items-center"
-            style={{
-              transform: 'translate3d(5%, 0, 0)',
-              willChange: 'transform',
-            }}
-          >
-            {KEY_FEATURES.map((feature) => (
-              <FeatureCard
+        {/* Navigation Icons */}
+        <div className="flex justify-center gap-2 sm:gap-3 mb-8 sm:mb-10 flex-wrap px-2">
+          {KEY_FEATURES.map((feature, index) => {
+            const isActive = activeIndex === index;
+
+            return (
+              <button
                 key={feature.title}
-                feature={feature}
-              />
-            ))}
-          </div>
+                onClick={() => handleIconClick(index)}
+                className={`flex flex-col items-center gap-2 p-3 sm:p-4 rounded-xl border transition-all duration-300 min-w-[70px] sm:min-w-[80px] ${
+                  isActive
+                    ? "bg-[#1a2a3a] border-[#3a5a7a]"
+                    : "bg-transparent border-white/10 hover:border-white/20 hover:bg-white/5"
+                }`}
+                title={feature.title}
+              >
+                <div className="relative w-7 h-7 sm:w-8 sm:h-8">
+                  <Image
+                    src={feature.icon}
+                    alt={feature.title}
+                    fill
+                    className={`object-contain transition-opacity duration-300 ${
+                      isActive ? "opacity-100" : "opacity-50"
+                    }`}
+                  />
+                </div>
+                <span
+                  className={`text-[9px] sm:text-[10px] font-medium tracking-wide transition-colors duration-300 ${
+                    isActive ? "text-[#4A9EFF]" : "text-white/40"
+                  }`}
+                >
+                  {NAV_LABELS[index]}
+                </span>
+              </button>
+            );
+          })}
         </div>
 
-        {/* Background Grid */}
-        <div
-          className="absolute inset-0 pointer-events-none opacity-50 -z-10"
-          style={{
-            backgroundImage: `
-              linear-gradient(rgba(69, 135, 244, 0.03) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(69, 135, 244, 0.03) 1px, transparent 1px)
-            `,
-            backgroundSize: "50px 50px",
-          }}
-        />
-      </section>
-    </div>
+        {/* Feature Card */}
+        <div className="max-w-5xl mx-auto">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeIndex}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4 }}
+              className="w-full"
+            >
+              <div
+                className="w-full min-h-[420px] sm:min-h-[400px] flex flex-col sm:flex-row items-stretch relative overflow-hidden rounded-[24px] border border-white/10"
+                style={{
+                  background:
+                    "linear-gradient(180deg, rgba(15, 23, 35, 0.95) 0%, rgba(10, 25, 40, 0.95) 100%)",
+                }}
+              >
+                {/* Text content */}
+                <div className="flex flex-col items-start justify-start flex-1 p-6 sm:p-8 relative z-10 w-full sm:w-1/2 order-2 sm:order-1">
+                  {/* Icon badge */}
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#1a3050] border border-[#2a4a6a] flex items-center justify-center mb-6">
+                    <div className="relative w-7 h-7 sm:w-8 sm:h-8">
+                      <Image
+                        src={activeFeature.icon}
+                        alt={activeFeature.title}
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
+                  </div>
+
+                  <h3
+                    className="font-bold mb-4 text-xl sm:text-2xl md:text-3xl"
+                    style={{
+                      background: `linear-gradient(135deg, ${activeFeature.color}, #fff)`,
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                    }}
+                  >
+                    {activeFeature.title}
+                  </h3>
+                  <p className="text-sm sm:text-base text-white/70 leading-relaxed mb-6 sm:mb-8">
+                    {activeFeature.description}
+                  </p>
+
+                  {/* Progress dots */}
+                  <div className="flex gap-2 mt-auto">
+                    {KEY_FEATURES.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleIconClick(index)}
+                        className={`h-1.5 rounded-full transition-all duration-300 ${
+                          activeIndex === index
+                            ? "bg-[#4A9EFF] w-6"
+                            : "bg-white/20 w-1.5 hover:bg-white/40"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Image */}
+                <div className="flex-1 w-full sm:w-1/2 relative flex items-center justify-center min-h-[180px] sm:min-h-0 order-1 sm:order-2 p-4 sm:p-8">
+                  {/* Glow */}
+                  <div
+                    className="absolute inset-0 opacity-20"
+                    style={{
+                      background: `radial-gradient(circle at center, ${activeFeature.color} 0%, transparent 60%)`,
+                    }}
+                  />
+
+                  <motion.div
+                    className="relative w-3/4 h-3/4 max-w-[220px] sm:max-w-[280px] aspect-square z-10"
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.4, delay: 0.1 }}
+                  >
+                    <Image
+                      src={activeFeature.image}
+                      alt={activeFeature.title}
+                      fill
+                      className="object-contain"
+                      sizes="(max-width: 640px) 70vw, 35vw"
+                      priority
+                    />
+                  </motion.div>
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
+    </section>
   );
 }
