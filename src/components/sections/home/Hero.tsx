@@ -46,7 +46,7 @@ export function Hero() {
           fps: 60,
           scale: 1,
           dpi: 1.5,
-          filePath: assetPath("/scenes/hero-background.json"),
+          filePath: assetPath("/scenes/hero-background.json?v=asset-paths-1"),
         });
         setScene(currentScene);
       }
