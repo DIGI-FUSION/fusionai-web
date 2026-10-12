@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { assetPath } from "@/lib/assetPath";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { useRef, useState, useEffect, useCallback } from "react";
 import { AnimatedSection } from "@/components/animations/AnimatedSection";
@@ -75,7 +76,7 @@ function AppIcon({
       />
 
       <Image
-        src={integration.logo}
+        src={assetPath(integration.logo)}
         alt={`${integration.name} integration`}
         fill
         className="object-contain !w-full !h-full"

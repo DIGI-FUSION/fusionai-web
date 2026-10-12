@@ -1,5 +1,6 @@
 "use client";
 
+import { assetPath } from "@/lib/assetPath";
 import { motion } from "framer-motion";
 import { AnimatedSection, StaggerContainer, StaggerItem } from "@/components/animations/AnimatedSection";
 import { FOOTER_LINKS, SOCIAL_ICONS } from "@/constants/social";
@@ -188,7 +189,7 @@ export function Footer() {
               {FOOTER_LINKS.explore.map((link) => (
                 <a
                   key={link.label}
-                  href={link.href}
+                  href={assetPath(link.href)}
                   style={{
                     display: "flex",
                     flexDirection: "row",
@@ -263,7 +264,7 @@ export function Footer() {
               {FOOTER_LINKS.innovate.map((link) => (
                 <a
                   key={link.label}
-                  href={link.href}
+                  href={assetPath(link.href)}
                   style={{
                     display: "flex",
                     flexDirection: "row",
@@ -338,7 +339,7 @@ export function Footer() {
               {FOOTER_LINKS.about.map((link) => (
                 <a
                   key={link.label}
-                  href={link.href}
+                  href={assetPath(link.href)}
                   style={{
                     display: "flex",
                     flexDirection: "row",
@@ -477,7 +478,7 @@ export function Footer() {
               {FOOTER_LINKS.explore.map((link) => (
                 <a
                   key={link.label}
-                  href={link.href}
+                  href={assetPath(link.href)}
                   className="flex items-center py-1 gap-2 no-underline"
                 >
                   <svg width="14" height="14" viewBox="0 0 18 18" fill="none">
@@ -519,7 +520,7 @@ export function Footer() {
               {FOOTER_LINKS.innovate.map((link) => (
                 <a
                   key={link.label}
-                  href={link.href}
+                  href={assetPath(link.href)}
                   className="flex items-center py-1 gap-2 no-underline"
                 >
                   <svg width="14" height="14" viewBox="0 0 18 18" fill="none">
@@ -561,7 +562,7 @@ export function Footer() {
               {FOOTER_LINKS.about.map((link) => (
                 <a
                   key={link.label}
-                  href={link.href}
+                  href={assetPath(link.href)}
                   className="flex items-center py-1 gap-2 no-underline"
                 >
                   <svg width="14" height="14" viewBox="0 0 18 18" fill="none">

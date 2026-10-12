@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { assetPath } from "@/lib/assetPath";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { AnimatedSection } from "@/components/animations/AnimatedSection";
@@ -100,7 +101,7 @@ function GalaxyCardComponent({ galaxy, index }: { galaxy: GalaxyCard; index: num
               }}
             >
               <Image
-                src={company.logo}
+                src={assetPath(company.logo)}
                 alt={company.name}
                 width={160}
                 height={45}

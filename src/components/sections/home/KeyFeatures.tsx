@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { assetPath } from "@/lib/assetPath";
 import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -93,7 +94,7 @@ export function KeyFeatures() {
               >
                 <div className="relative w-7 h-7 sm:w-8 sm:h-8">
                   <Image
-                    src={feature.icon}
+                    src={assetPath(feature.icon)}
                     alt={feature.title}
                     fill
                     className={`object-contain transition-opacity duration-300 ${
@@ -137,7 +138,7 @@ export function KeyFeatures() {
                   <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#1a3050] border border-[#2a4a6a] flex items-center justify-center mb-6">
                     <div className="relative w-7 h-7 sm:w-8 sm:h-8">
                       <Image
-                        src={activeFeature.icon}
+                        src={assetPath(activeFeature.icon)}
                         alt={activeFeature.title}
                         fill
                         className="object-contain"
@@ -192,7 +193,7 @@ export function KeyFeatures() {
                     transition={{ duration: 0.4, delay: 0.1 }}
                   >
                     <Image
-                      src={activeFeature.image}
+                      src={assetPath(activeFeature.image)}
                       alt={activeFeature.title}
                       fill
                       className="object-contain"

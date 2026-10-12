@@ -1,5 +1,6 @@
 "use client";
 
+import { assetPath } from "@/lib/assetPath";
 import { Button } from "@/components/ui/Button";
 import { GetStartedButton } from "@/components/ui/GetStartedButton";
 import { useRef, useEffect, useState } from "react";
@@ -22,13 +23,13 @@ export function Hero() {
       if (!window.UnicornStudio?.addScene) {
         // Load the script if not already loaded
         await new Promise<void>((resolve) => {
-          const existingScript = document.querySelector('script[src="/scripts/unicornStudio.umd.js"]');
+          const existingScript = document.querySelector(`script[src="${assetPath("/scripts/unicornStudio.umd.js")}"]`);
           if (existingScript) {
             resolve();
             return;
           }
           const script = document.createElement("script");
-          script.src = "/scripts/unicornStudio.umd.js";
+          script.src = assetPath("/scripts/unicornStudio.umd.js");
           script.onload = () => resolve();
           document.head.appendChild(script);
         });
@@ -45,7 +46,7 @@ export function Hero() {
           fps: 60,
           scale: 1,
           dpi: 1.5,
-          filePath: "/scenes/hero-background.json",
+          filePath: assetPath("/scenes/hero-background.json"),
         });
         setScene(currentScene);
       }

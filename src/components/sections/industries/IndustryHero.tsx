@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { assetPath } from "@/lib/assetPath";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { Button } from "@/components/ui/Button";
@@ -70,7 +71,7 @@ export function IndustryHero({ industry }: IndustryHeroProps) {
       {/* Background image with parallax */}
       <motion.div className="absolute inset-0 z-0" style={{ y }}>
         <Image
-          src={industry.heroImage}
+          src={assetPath(industry.heroImage)}
           alt={industry.name}
           fill
           className="object-cover mix-blend-soft-light"

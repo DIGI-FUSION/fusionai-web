@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { assetPath } from "@/lib/assetPath";
 import { motion } from "framer-motion";
 import { AnimatedSection } from "@/components/animations/AnimatedSection";
 
@@ -73,7 +74,7 @@ export function TrustedBy() {
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
                 <Image
-                  src={partner.logo}
+                  src={assetPath(partner.logo)}
                   alt={partner.name}
                   width={150}
                   height={50}

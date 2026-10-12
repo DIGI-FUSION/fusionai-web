@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { assetPath } from "@/lib/assetPath";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 
@@ -42,7 +43,7 @@ export function CompanyHero() {
         style={{ y }}
       >
         <Image
-          src="/aba/herobg.webp"
+          src={assetPath("/aba/herobg.webp")}
           alt="ABA Technology Background"
           fill
           className="object-cover"
@@ -67,7 +68,7 @@ export function CompanyHero() {
         transition={{ duration: 1, delay: 0.3 }}
       >
         <Image
-          src="/aba/abagalaxy.svg"
+          src={assetPath("/aba/abagalaxy.svg")}
           alt="ABA Technology Galaxy"
           fill
           className="object-contain"

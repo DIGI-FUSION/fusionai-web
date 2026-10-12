@@ -1,6 +1,7 @@
 import { Footer } from "@/components/layout";
 import products from "@/constants/products";
 import Image from "next/image";
+import { assetPath } from "@/lib/assetPath";
 import { AnimatedSection, StaggerContainer, StaggerItem } from "@/components/animations/AnimatedSection";
 import { TiltCard, ScaleHover } from "@/components/animations/MagneticButton";
 import { GradientCard } from "@/components/ui/GradientCard";
@@ -30,7 +31,7 @@ export default function ProductsPage() {
         {/* Background Image with Color Dodge effect */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <Image
-            src="/products/productsBg.png"
+            src={assetPath("/products/productsBg.png")}
             alt=""
             width={1259}
             height={841}
@@ -64,7 +65,7 @@ export default function ProductsPage() {
                         <div className="w-full flex flex-row justify-between items-center">
                           <div className="flex-shrink-0">
                             <Image
-                              src={product.image}
+                              src={assetPath(product.image)}
                               alt={product.title}
                               width={56}
                               height={56}

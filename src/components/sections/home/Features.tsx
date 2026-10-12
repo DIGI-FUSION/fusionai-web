@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { assetPath } from "@/lib/assetPath";
 import { motion } from "framer-motion";
 import { GradientCard } from "@/components/ui/GradientCard";
 import { AnimatedSection, StaggerContainer, StaggerItem } from "@/components/animations/AnimatedSection";
@@ -77,7 +78,7 @@ export function Features() {
                       }}
                     >
                       <Image
-                        src={feature.icon}
+                        src={assetPath(feature.icon)}
                         alt={feature.title}
                         width={146}
                         height={146}

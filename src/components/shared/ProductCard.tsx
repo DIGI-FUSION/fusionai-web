@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { assetPath } from "@/lib/assetPath";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { GradientCard } from "@/components/ui";
@@ -24,7 +25,7 @@ export function ProductCard({ id, title, description, image, href }: ProductCard
           <div className="flex items-start gap-6">
             <div className="flex-shrink-0">
               <div className="w-12 h-12 rounded-md bg-gradient-to-br from-blue-600 to-indigo-500 flex items-center justify-center">
-                <Image src={image} alt={title} width={44} height={44} className="object-contain" />
+                <Image src={assetPath(image)} alt={title} width={44} height={44} className="object-contain" />
               </div>
             </div>
 

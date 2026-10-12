@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { assetPath } from "@/lib/assetPath";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { GetStartedButton } from "@/components/ui/GetStartedButton";
@@ -101,7 +102,7 @@ export function Navbar() {
           <Link href="/" className="flex items-center gap-2 pl-1 pr-1">
             <div className="relative h-8 md:h-10 w-40 md:w-48 rounded-2xl overflow-hidden">
               <Image
-                src="/navbarlogo.svg"
+                src={assetPath("/navbarlogo.svg")}
                 alt="AbaFusion"
                 fill
                 priority

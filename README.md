@@ -34,3 +34,24 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## GitHub Pages deployment
+
+This site exports static files to `out/`. The workflow in
+`.github/workflows/pages.yml` builds and deploys changes pushed to `main`.
+
+1. Enable Pages eligibility: use a public repository, or GitHub Team for this
+   organization-owned private repository.
+2. Under **Settings → Pages → Build and deployment**, choose **GitHub Actions**.
+3. Push the deployment changes to `main` or manually run the deployment workflow.
+
+The default URL is `https://digi-fusion.github.io/fusionai-web/`.
+The workflow reads the repository base path from GitHub Pages and passes it to
+Next.js so routes, images, and animation assets use the correct URL prefix.
+No custom domain is configured.
+
+To check the production export locally:
+
+```bash
+NEXT_PUBLIC_BASE_PATH=/fusionai-web npm run build
+```

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { assetPath } from "@/lib/assetPath";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { Industry } from "@/constants/industries";
@@ -92,7 +93,7 @@ function UseCaseCard({
               transition={{ duration: 0.7, delay: 0.2 }}
             >
               <Image
-                src={useCase.image}
+                src={assetPath(useCase.image)}
                 alt={useCase.title}
                 fill
                 className="object-cover transition-all duration-500 grayscale group-hover:grayscale-0 group-hover:scale-105"

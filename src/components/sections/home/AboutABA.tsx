@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { assetPath } from "@/lib/assetPath";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { GetStartedButton } from "@/components/ui/GetStartedButton";
@@ -150,7 +151,7 @@ export function AboutABA() {
           >
             <div className="w-full flex items-center justify-center">
               <Image
-                src="/aboutABA.svg"
+                src={assetPath("/aboutABA.svg")}
                 alt="ABA Fusion AI platform diagram"
                 width={1200}
                 height={600}

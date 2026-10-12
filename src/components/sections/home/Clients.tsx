@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { assetPath } from "@/lib/assetPath";
 import { motion } from "framer-motion";
 import { AnimatedSection } from "@/components/animations/AnimatedSection";
 import { DOUBLED_CLIENTS } from "@/constants/clients";
@@ -44,7 +45,7 @@ export function Clients() {
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
                 <Image
-                  src={client.logo}
+                  src={assetPath(client.logo)}
                   alt={client.name}
                   width={120}
                   height={60}

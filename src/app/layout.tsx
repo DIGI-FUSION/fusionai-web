@@ -1,3 +1,4 @@
+import { assetPath } from "@/lib/assetPath";
 import type { Metadata } from "next";
 import { Be_Vietnam_Pro, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
   description:
     "FusionAI is an intelligent orchestration platform that seamlessly integrates AI capabilities into your applications, enhancing productivity and innovation.",
     icons: {
-      icon: "/abafusion.svg",
+      icon: assetPath("/abafusion.svg"),
     },
 };
 

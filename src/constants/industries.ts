@@ -221,7 +221,7 @@ export const INDUSTRIES: Industry[] = [
     heroSubtitle: "Fusion AI delivers real-time threat intelligence by analyzing multiple sources",
     heroDescription:
       "Fusion optimizes mission planning through dynamic geospatial and logistics insights, ensuring rapid, data-driven deployment decisions. Predictive maintenance and automated audit trails further enhance asset readiness, regulatory compliance, and operational accountability.",
-    heroImage: "/industries/defense-security/card0.png",
+    heroImage: "/industries/defenseandsecurity/card0.png",
     featuresTitle: "Unleashing the Power of Edge Computing in Defense & Security",
     features: SHARED_FEATURES,
     useCases: [
@@ -229,25 +229,25 @@ export const INDUSTRIES: Industry[] = [
         title: "Fortify Defense Posture with AI-Powered Threat Intelligence",
         description:
           "Fusion AI ingests multi-source intelligence feeds and sensor data to detect anomalies and emerging threats - empowering security teams to preempt attacks and safeguard critical assets.",
-        image: "/industries/defense-security/card1.png",
+        image: "/industries/defenseandsecurity/card1.png",
       },
       {
         title: "Streamline Mission Planning with Real-Time Operational Insights",
         description:
           "By consolidating geospatial, logistics, and troop-status information, Fusion AI provides dynamic recommendations for resource allocation and deployment, ensuring mission success under evolving conditions.",
-        image: "/industries/defense-security/card2.png",
+        image: "/industries/defenseandsecurity/card2.png",
       },
       {
         title: "Enhance Asset Readiness with Predictive Maintenance Algorithms",
         description:
           "Leveraging equipment telemetry and maintenance history, Fusion AI anticipates system failures - scheduling timely inspections and repairs to maximize operational availability and reduce lifecycle costs.",
-        image: "/industries/defense-security/card3.png",
+        image: "/industries/defenseandsecurity/card3.png",
       },
       {
         title: "Guarantee Compliance and Auditability via Automated Reporting",
         description:
           "Fusion AI generates secure, timestamped logs of all activities and data exchanges - simplifying after action reviews, regulatory compliance, and transparent information sharing among stakeholders.",
-        image: "/industries/defense-security/card4.png",
+        image: "/industries/defenseandsecurity/card4.png",
       },
     ],
     ctaTitle: "Ready to Automate Your Work?",
@@ -260,7 +260,7 @@ export const INDUSTRIES: Industry[] = [
     heroSubtitle: "Fusion AI delivers unified, real-time visibility across suppliers",
     heroDescription:
       "Fusion AI delivers unified, real-time visibility across the supply chain, from suppliers to carriers and warehouses, empowering teams to proactively manage inventory and prevent supply chain disruptions. It leverages predictive slotting and demand forecasting to optimize warehouse workflows and maintain ideal stock levels. Automated compliance audits streamline regulatory checks and documentation—minimizing delays and avoiding penalties.",
-    heroImage: "/industries/supply-chain/card0.png",
+    heroImage: "/industries/supplychain/card0.png",
     featuresTitle: "Unleashing the Power of Edge Computing in Supply Chain",
     features: SHARED_FEATURES,
     useCases: [
@@ -268,25 +268,25 @@ export const INDUSTRIES: Industry[] = [
         title: "Orchestrate End-to-End Visibility with Intelligent Tracking",
         description:
           "Fusion AI aggregates data from suppliers, carriers, and warehouses to provide a unified, real-time view of inventory and shipments—enabling proactive decision-making and minimizing stockouts.",
-        image: "/industries/supply-chain/card1.png",
+        image: "/industries/supplychain/card1.png",
       },
       {
         title: "Optimize Warehouse Operations with Predictive Slotting",
         description:
           "By analyzing order patterns and demand forecasts, Fusion AI recommends optimal slotting and resource allocation—streamlining picking routes and reducing handling times in high-throughput facilities.",
-        image: "/industries/supply-chain/card2.png",
+        image: "/industries/supplychain/card2.png",
       },
       {
         title: "Forecast Demand Fluctuations to Balance Inventory",
         description:
           "Leveraging historical sales data and market indicators, Fusion AI produces accurate demand forecasts—helping businesses maintain optimal stock levels and reduce carrying costs.",
-        image: "/industries/supply-chain/card3.png",
+        image: "/industries/supplychain/card3.png",
       },
       {
         title: "Ensure Regulatory Compliance with Automated Audits",
         description:
           "Fusion AI continuously monitors shipping regulations, trade agreements, and customs requirements—automating compliance checks and documentation to prevent costly delays and penalties.",
-        image: "/industries/supply-chain/card4.png",
+        image: "/industries/supplychain/card4.png",
       },
     ],
     ctaTitle: "Ready to Automate Your Work?",

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { assetPath } from "@/lib/assetPath";
 import { motion } from "framer-motion";
 import { GradientCard } from "@/components/ui/GradientCard";
 import { AnimatedSection, StaggerContainer, StaggerItem } from "@/components/animations/AnimatedSection";
@@ -58,7 +59,7 @@ export function ChoosePath() {
                     transition={{ duration: 0.4 }}
                   >
                     <Image
-                      src={path.image}
+                      src={assetPath(path.image)}
                       alt={path.title}
                       fill
                       sizes="(max-width: 768px) 100vw, 336px"
