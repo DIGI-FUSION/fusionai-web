@@ -20,7 +20,7 @@ export const KEY_FEATURES = [
   {
     title: "FUSION DATA PLATFORM",
     description: "FUSION DATA PLATFORM constitue la colonne vertébrale de la gouvernance des données de Fusion AI. Elle permet la collecte, la structuration, la sécurisation et la qualification des données provenant de sources multiples, tout en garantissant la traçabilité, la conformité et la cohérence. En fournissant un contexte de données unifié et fiable, ce module assure que les modèles d'IA, les agents et les automatisations s'appuient sur des données contrôlées, auditables et adaptées à l'environnement d'entreprise.",
-    image: "/keySections/data.png",
+    image: "/keySections/data.png?v=2",
     icon: "/keySections/data_icon.svg",
     color: "#4285F4",
   },
